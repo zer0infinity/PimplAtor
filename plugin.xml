@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actionSet"
+            label="C/C++ Coding"
+            visible="false">
+         <menu
+               id="org.eclipse.jdt.ui.refactoring.menu"
+               label="Refac&amp;tor">
+            <separator
+                  name="reorgGroup">
+            </separator>
+            <separator
+                  name="codingGroup">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionDelegate"
+               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.introduce.pimpl"
+               label="Introduce PImpl..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               toolbarPath="codingGroup">
+         </action>
+      </actionSet>
+   </extension>
+</plugin>
