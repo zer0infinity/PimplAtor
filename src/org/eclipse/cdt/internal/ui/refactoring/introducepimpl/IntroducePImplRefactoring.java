@@ -165,9 +165,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			}
 
 			public int visit(IASTDeclaration declaration) {
-				if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
+//				if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
 					container.setObject((IASTDeclaration) declaration);
-				}
+//				}
 				return super.visit(declaration);
 			}
 		});
