@@ -112,7 +112,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private IntroducePImplInformation info;
 	private ArrayList<IASTSimpleDeclaration> privateStaticList;
 
-	public IntroducePImplRefactoring(IFile file, ISelection selection, ICElement celem, IntroducePImplInformation info) {
+	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
 		name = Messages.IntroducePImpl_IntroducePImpl;
