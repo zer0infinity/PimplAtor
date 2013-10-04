@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
@@ -73,14 +74,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.utils.DeclarationFinder;
+import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Region;
@@ -128,11 +130,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			}
 			sm.worked(1);
 
-			IASTNode selectedNode = findFirstSelectedNode(selectedRegion, unit);
+			IASTNode selectedNode = findFirstSelectedNode(selectedRegion, tu);
 			sm.worked(2);
 
-			if (unit.isHeaderUnit()) {
-				info.setHeaderUnit(unit);
+			if (tu.isHeaderUnit()) {
+				info.setHeaderUnit(tu);
 			} else {
 				while (!(selectedNode instanceof CPPASTFunctionDefinition) && selectedNode != null) {
 					selectedNode = selectedNode.getParent();
@@ -155,22 +157,30 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return status;
 	}
 
-	private IASTDeclaration findFirstSelectedNode(final Region textSelection, IASTTranslationUnit unit) {
+	private IASTDeclaration findFirstSelectedNode(final Region textSelection, ITranslationUnit tu) {
 
 		final Container<IASTDeclaration> container = new Container<IASTDeclaration>();
 
-		unit.accept(new ASTVisitor() {
-			{
-				shouldVisitDeclarations = true;
-			}
+		try {
+			getAST(tu,null).accept(new ASTVisitor() {
+				{
+					shouldVisitDeclarations = true;
+				}
 
-			public int visit(IASTDeclaration declaration) {
+				public int visit(IASTDeclaration declaration) {
 //				if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
-					container.setObject((IASTDeclaration) declaration);
+						container.setObject((IASTDeclaration) declaration);
 //				}
-				return super.visit(declaration);
-			}
-		});
+					return super.visit(declaration);
+				}
+			});
+		} catch (OperationCanceledException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return container.getObject();
 	}
@@ -179,20 +189,20 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTName name = ((ICPPASTFunctionDefinition) selectedNode).getDeclarator().getName();
 		IBinding bind = name.resolveBinding();
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
-		IASTTranslationUnit tmpUnit = null;
+		ITranslationUnit tmpUnit = null;
 		for (IIndexName indexName : foundDecl) {
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
 					new Path(indexName.getFileLocation().getFileName()));
-			tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
+/*			tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
 					selectedNode = DeclarationFinder.findDeclarationInTranslationUnit(tmpUnit, indexName);
 					break;
 				}
 			}
-		}
+*/		}
 		if (tmpUnit == null) {
-			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " + file.getName());
+			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " /*+ file.getName()*/);
 		} else {
 			info.setHeaderUnit(tmpUnit);
 		}
@@ -210,18 +220,26 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				node = node.getParent();
 			}
 		} else {
-			unit.accept(new ASTVisitor() {
-				{
-					shouldVisitDeclSpecifiers = true;
-				}
-
-				public int visit(IASTDeclSpecifier declSpec) {
-					if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-						info.getClassSpecifiers().add((ICPPASTCompositeTypeSpecifier) declSpec);
+			try {
+				getAST(getTranslationUnit(),new NullProgressMonitor()).accept(new ASTVisitor() {
+					{
+						shouldVisitDeclSpecifiers = true;
 					}
-					return super.visit(declSpec);
-				}
-			});
+
+					public int visit(IASTDeclSpecifier declSpec) {
+						if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+							info.getClassSpecifiers().add((ICPPASTCompositeTypeSpecifier) declSpec);
+						}
+						return super.visit(declSpec);
+					}
+				});
+			} catch (OperationCanceledException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (info.getClassSpecifiers().size() == 1) {
 				node = info.getClassSpecifiers().get(0);
 			}
@@ -229,59 +247,59 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return (CPPASTCompositeTypeSpecifier) node;
 	}
 
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) {
-		SubMonitor sm = SubMonitor.convert(pm, 10);
-		RefactoringStatus status = new RefactoringStatus();
-		try {
-			sm.worked(0);
-
-			status = super.checkFinalConditions(pm);
-			sm.worked(1);
-
-			ArrayList<IFile> cppFiles = collectDecl();
-			sm.worked(5);
-			if (cppFiles.size() > 1) {
-				status.addInfo(Messages.IntroducePImpl_FunctionInOneFile);
-				for (IFile file : cppFiles) {
-					status.addFatalError(Messages.IntroducePImpl_TooManyCppFiles + ": " + file.getFullPath());
-				}
-			} else {
-				if (cppFiles.size() == 1) {
-					info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
-				}
-				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
-				for (IASTSimpleDeclaration simplDecl : declWithoutDefinition) {
-					status.addFatalError(Messages.IntroducePImpl_NoDefinitionFound + ": \""
-							+ simplDecl.getRawSignature() + "\"");
-				}
-				if (cppFiles.size() == 0) {
-					/*
-					 * TODO: If CreateFileChange is implemented, this must be implemented here.
-					 * At this time, the file will be created but not removed if the process is aborted.
-					 */
-					fileCreated = true;
-					IPath path = new Path(info.getHeaderUnit().getFilePath()).removeFileExtension().addFileExtension(
-							CPP_FILE_EXTENSION);
-					IFile cppFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-					if (!cppFile.exists()) {
-						status.addWarning(Messages.IntroducePImpl_CppFileCreated);
-						// If InputStream is null, file will be marked as notLocal and will not be created!
-						ByteArrayInputStream dummyStream =new ByteArrayInputStream("".getBytes());
-						cppFile.create(dummyStream, true, pm);
-					}
-					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
-					sourceUnit.setIsHeaderUnit(false);
-					info.setSourceUnit(sourceUnit);
-				}
-			}
-			sm.done();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return status;
-	}
-
+//	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) {
+//		SubMonitor sm = SubMonitor.convert(pm, 10);
+//		RefactoringStatus status = new RefactoringStatus();
+//		try {
+//			sm.worked(0);
+//
+//			status = super.checkFinalConditions(pm);
+//			sm.worked(1);
+//
+//			ArrayList<IFile> cppFiles = collectDecl();
+//			sm.worked(5);
+//			if (cppFiles.size() > 1) {
+//				status.addInfo(Messages.IntroducePImpl_FunctionInOneFile);
+//				for (IFile file : cppFiles) {
+//					status.addFatalError(Messages.IntroducePImpl_TooManyCppFiles + ": " + file.getFullPath());
+//				}
+//			} else {
+//				if (cppFiles.size() == 1) {
+//					info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
+//				}
+//				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
+//				for (IASTSimpleDeclaration simplDecl : declWithoutDefinition) {
+//					status.addFatalError(Messages.IntroducePImpl_NoDefinitionFound + ": \""
+//							+ simplDecl.getRawSignature() + "\"");
+//				}
+//				if (cppFiles.size() == 0) {
+//					/*
+//					 * TODO: If CreateFileChange is implemented, this must be implemented here.
+//					 * At this time, the file will be created but not removed if the process is aborted.
+//					 */
+//					fileCreated = true;
+//					IPath path = new Path(info.getHeaderUnit().getFilePath()).removeFileExtension().addFileExtension(
+//							CPP_FILE_EXTENSION);
+//					IFile cppFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+//					if (!cppFile.exists()) {
+//						status.addWarning(Messages.IntroducePImpl_CppFileCreated);
+//						// If InputStream is null, file will be marked as notLocal and will not be created!
+//						ByteArrayInputStream dummyStream =new ByteArrayInputStream("".getBytes());
+//						cppFile.create(dummyStream, true, pm);
+//					}
+//					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
+//					IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
+//					sourceUnit.setIsHeaderUnit(false);
+//					info.setSourceUnit(sourceUnit);
+//				}
+//			}
+//			sm.done();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return status;
+//	}
+// ---> collectModifications
 	private ArrayList<IFile> collectDecl() throws CoreException {
 		ArrayList<IFile> cppFiles = new ArrayList<IFile>();
 		for (IASTDeclaration tmpMember : info.getClassSpecifier().getDeclarations(false)) {
@@ -319,7 +337,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					publicLabel = true;
 				}
 			} else if (NodeHelper.isFunctionDeclarator(member)) {
-				ICPPASTFunctionDefinition definition = getDefinitionOfDeclaration(member);
+				ICPPASTFunctionDefinition definition =null;// DefinitionFinder.getMemberDeclaration(member, tu, refactoringContext, null);//getDefinitionOfDeclaration(member);
 				if (definition == null) {
 					declWithoutDefinition.add((IASTSimpleDeclaration) member);
 				}
@@ -341,9 +359,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
-				cppDecName = DeclarationFinder.findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
+				cppDecName = null;//DefinitionFinder.//DeclarationFinder.findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
 			} else if (info.getHeaderUnit() != null) {
-				cppDecName = DeclarationFinder.findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
+				cppDecName = null;//DeclarationFinder.findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
 			}
 			if (!(cppDecName == null)) {
 				while (!(cppDecName instanceof ICPPASTFunctionDefinition)) {
@@ -362,7 +380,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		try {
 			int workTick = 0;
 			sm.worked(workTick++);
-			ASTRewrite headerRewrite = collector.rewriterForTranslationUnit(info.getHeaderUnit());
+			ASTRewrite headerRewrite = collector.rewriterForTranslationUnit(info.getHeaderUnit().getAST());
 			insertHeaderIncludes(headerRewrite);
 			sm.worked(workTick++);
 			ASTRewrite sourceRewrite = collector.rewriterForTranslationUnit(info.getSourceUnit());
@@ -458,21 +476,26 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private NodeContainer<IASTNode> getSourceClassContainer(ASTRewrite sourceRewrite) {
 		final NodeContainer<IASTNode> container = new NodeContainer<IASTNode>(info.getSourceUnit(), sourceRewrite);
 		if (fileCreated) {
-			info.getHeaderUnit().accept(new ASTVisitor() {
-				{
-					shouldVisitNamespaces = true;
-				}
+			try {
+				info.getHeaderUnit().getAST().accept(new ASTVisitor() {
+					{
+						shouldVisitNamespaces = true;
+					}
 
-				public int visit(ICPPASTNamespaceDefinition namespaceInHeader) {
-					ICPPASTNamespaceDefinition namespaceCopy = new CPPASTNamespaceDefinition(namespaceInHeader
-							.getName().copy());
-					ASTRewrite rewrite = container.getRewrite().insertBefore(container.getNode(), null, namespaceCopy,
-							new TextEditGroup(Messages.IntroducePImpl_Rewrite_NamespaceInserted));
-					container.setNode(namespaceCopy);
-					container.setRewrite(rewrite);
-					return super.visit(namespaceInHeader);
-				}
-			});
+					public int visit(ICPPASTNamespaceDefinition namespaceInHeader) {
+						ICPPASTNamespaceDefinition namespaceCopy = new CPPASTNamespaceDefinition(namespaceInHeader
+								.getName().copy());
+						ASTRewrite rewrite = container.getRewrite().insertBefore(container.getNode(), null, namespaceCopy,
+								new TextEditGroup(Messages.IntroducePImpl_Rewrite_NamespaceInserted));
+						container.setNode(namespaceCopy);
+						container.setRewrite(rewrite);
+						return super.visit(namespaceInHeader);
+					}
+				});
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			if (info.getClassSpecifier().getParent().getParent() instanceof ICPPASTNamespaceDefinition) {
 				ICPPASTNamespaceDefinition namespaceInHeader = (ICPPASTNamespaceDefinition) info.getClassSpecifier()
@@ -743,17 +766,41 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			includesInsserted = true;
 		}
 		if (includesInsserted) {
-			headerRewrite.insertBefore(info.getHeaderUnit(), info.getHeaderUnit().getDeclarations()[0], headerRewrite
-					.createLiteralNode("\n"), new TextEditGroup(Messages.IntroducePImpl_Rewrite_NewLineInsertHeader));
+			try {
+				headerRewrite.insertBefore(info.getHeaderUnit().getAST(), info.getHeaderUnit().getAST().getDeclarations()[0], headerRewrite
+						.createLiteralNode("\n"), new TextEditGroup(Messages.IntroducePImpl_Rewrite_NewLineInsertHeader));
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void insertSourceIncludes(ASTRewrite sourceRewrite) {
-		String filename = new File(info.getHeaderUnit().getFilePath()).getName();
+		String filename=null;
+		try {
+			filename = new File(info.getHeaderUnit().getAST().getFilePath()).getName();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		insertInclude("\"" + filename + "\"", sourceRewrite, info.getSourceUnit());
 	}
 
-	private void insertInclude(String libraryStmt, ASTRewrite rewrite, IASTTranslationUnit unit) {
+	private void insertInclude(String libraryStmt, ASTRewrite sourceRewrite,
+			IASTTranslationUnit sourceUnit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void insertInclude(String libraryStmt, ASTRewrite rewrite, ITranslationUnit iunit) {
+		IASTTranslationUnit unit=null;
+		try {
+			unit = iunit.getAST();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (!existIncludeLibrary(libraryStmt, unit)) {
 			IASTNode insertPoint = null;
 			if (unit.getDeclarations().length > 0) {

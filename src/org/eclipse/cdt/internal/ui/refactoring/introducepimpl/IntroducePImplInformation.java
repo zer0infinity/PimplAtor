@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class IntroducePImplInformation {
 
@@ -31,7 +32,7 @@ public class IntroducePImplInformation {
 
 	private ICPPASTCompositeTypeSpecifier classSpecifier = null;
 
-	private IASTTranslationUnit headerUnit;
+	private ITranslationUnit headerUnit;
 	private IASTTranslationUnit sourceUnit;
 
 	public IASTTranslationUnit getSourceUnit() {
@@ -74,11 +75,11 @@ public class IntroducePImplInformation {
 		return copyType;
 	}
 
-	public void setHeaderUnit(IASTTranslationUnit headerUnit) {
-		this.headerUnit = headerUnit;
+	public void setHeaderUnit(ITranslationUnit tu) {
+		this.headerUnit = tu;
 	}
 
-	public IASTTranslationUnit getHeaderUnit() {
+	public ITranslationUnit getHeaderUnit() {
 		return headerUnit;
 	}
 
