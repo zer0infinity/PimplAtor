@@ -1,9 +1,9 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
@@ -74,12 +73,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
-import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -175,10 +171,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 			});
 		} catch (OperationCanceledException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -234,10 +228,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					}
 				});
 			} catch (OperationCanceledException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (info.getClassSpecifiers().size() == 1) {
@@ -493,7 +485,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					}
 				});
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -598,9 +589,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode, NodeContainer<IASTNode> sourceClassNode,
 			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
 		handleHeaderConstructor(functionDefinition, headerClassNode);
-
 		handleSourceConstructor(functionDefinition, sourceClassNode);
-
 		handleImplConstructor(functionDefinition, implClassNode);
 	}
 
@@ -770,7 +759,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				headerRewrite.insertBefore(info.getHeaderUnit().getAST(), info.getHeaderUnit().getAST().getDeclarations()[0], headerRewrite
 						.createLiteralNode("\n"), new TextEditGroup(Messages.IntroducePImpl_Rewrite_NewLineInsertHeader));
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -781,7 +769,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		try {
 			filename = new File(info.getHeaderUnit().getAST().getFilePath()).getName();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		insertInclude("\"" + filename + "\"", sourceRewrite, info.getSourceUnit());
@@ -798,7 +785,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		try {
 			unit = iunit.getAST();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (!existIncludeLibrary(libraryStmt, unit)) {
