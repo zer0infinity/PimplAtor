@@ -8,24 +8,24 @@ import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.Messages;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-public class IntroducePImplViewActionDelegate implements IViewActionDelegate {
-	private IViewPart view;
+public class IntroducePImplViewActionDelegate implements IEditorActionDelegate {
+	private IEditorPart targetEditor;
 
 	@Override
 	public void run(IAction action) {
 		IntroducePImplAction pimplAction = new IntroducePImplAction(Messages.IntroducePImpl_IntroducePImpl);
-		if (view.getSite().getPage().getActivePart() instanceof CEditor) {
-			pimplAction.setEditor(view.getSite().getPage().getActiveEditor());
+		if(targetEditor.getSite().getPage().getActivePart() instanceof CEditor) {
+			pimplAction.setEditor(targetEditor.getSite().getPage().getActiveEditor());
 			pimplAction.run();
 		}
-		IWorkbenchPart part = view.getSite().getPage().getActivePart();
+		IWorkbenchPart part = targetEditor.getSite().getPage().getActivePart();
 		if (part instanceof ContentOutline || part instanceof CView|| part instanceof ProjectExplorer) {
 			IWorkbenchSite site = part.getSite();
 			pimplAction.setSite(site);
@@ -53,7 +53,7 @@ public class IntroducePImplViewActionDelegate implements IViewActionDelegate {
 	}
 
 	@Override
-	public void init(IViewPart view) {
-		this.view = view;
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		this.targetEditor = targetEditor;
 	}
 }

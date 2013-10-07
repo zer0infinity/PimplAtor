@@ -71,8 +71,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -219,6 +221,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
+//				DefinitionFinder.getDefinition(info.getSourceUnit(), new CRefactoringContext(this), null);
 				cppDecName = null;//DefinitionFinder.//DeclarationFinder.findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
 			} else if (info.getHeaderUnit() != null) {
 				cppDecName = null;//DeclarationFinder.findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);

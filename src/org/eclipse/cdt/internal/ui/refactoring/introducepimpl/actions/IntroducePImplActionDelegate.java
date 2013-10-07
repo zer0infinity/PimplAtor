@@ -12,10 +12,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-;
 
 /**
  * Our sample action implements workbench action delegate. The action proxy will
@@ -28,12 +27,6 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 @SuppressWarnings("restriction")
 public class IntroducePImplActionDelegate implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
-
-	/**
-	 * The constructor.
-	 */
-	public IntroducePImplActionDelegate() {
-	}
 
 	/**
 	 * The action has been activated. The argument of the method represents the

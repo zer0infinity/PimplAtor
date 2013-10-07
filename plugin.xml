@@ -37,9 +37,9 @@
                id="Menu.viewerContribution1" 
                targetID="#CEditorContext">
          <action
-               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplViewActionDelegate" 
-               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.context.actions" 
-               label="Introduce PImpl..." 
+               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplViewActionDelegate"
+               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.context.actions"
+               label="Introduce PImpl..."
                menubarPath="org.eclipse.cdt.ui.refactoring.menu/codingGroup">
          </action>           
 
