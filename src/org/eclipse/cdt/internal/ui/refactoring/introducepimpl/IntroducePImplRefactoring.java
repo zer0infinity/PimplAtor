@@ -73,13 +73,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
@@ -99,7 +96,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private static final String BOOST_SHARED_PTR_INCLUDE = "<boost/shared_ptr.hpp>";
 	private static final String TR1_SHARED_PTR_INCLUDE = "<tr1/memory>";
 	private static final String BOOST_NONCOPYABLE_INCLUDE = "<boost/noncopyable.hpp>";
-	private static final String CPP_FILE_EXTENSION = "cpp";
 	private static final String COPY_PARAM_NAME = "toCopy";
 	private boolean fileCreated = false;
 	private int actualOriginalVisibility = ICPPASTVisibilityLabel.v_public;
@@ -140,7 +136,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					return status;
 				}
 				sm.worked(3);
-				selectedNode = LoadHeaderUnit(selectedNode, status);
 				if (status.hasError()) {
 					return status;
 				}
@@ -164,9 +159,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 
 				public int visit(IASTDeclaration declaration) {
-//				if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
-						container.setObject((IASTDeclaration) declaration);
-//				}
+					container.setObject((IASTDeclaration) declaration);
 					return super.visit(declaration);
 				}
 			});
@@ -177,30 +170,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 
 		return container.getObject();
-	}
-
-	private IASTNode LoadHeaderUnit(IASTNode selectedNode, RefactoringStatus status) throws CoreException {
-		IASTName name = ((ICPPASTFunctionDefinition) selectedNode).getDeclarator().getName();
-		IBinding bind = name.resolveBinding();
-		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
-		ITranslationUnit tmpUnit = null;
-		for (IIndexName indexName : foundDecl) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
-					new Path(indexName.getFileLocation().getFileName()));
-/*			tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
-			if (tmpUnit != null) {
-				if (tmpUnit.isHeaderUnit()) {
-					selectedNode = DeclarationFinder.findDeclarationInTranslationUnit(tmpUnit, indexName);
-					break;
-				}
-			}
-*/		}
-		if (tmpUnit == null) {
-			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " /*+ file.getName()*/);
-		} else {
-			info.setHeaderUnit(tmpUnit);
-		}
-		return selectedNode;
 	}
 
 	private CPPASTCompositeTypeSpecifier getClassNodeOf(IASTNode node) {
@@ -237,107 +206,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			}
 		}
 		return (CPPASTCompositeTypeSpecifier) node;
-	}
-
-//	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) {
-//		SubMonitor sm = SubMonitor.convert(pm, 10);
-//		RefactoringStatus status = new RefactoringStatus();
-//		try {
-//			sm.worked(0);
-//
-//			status = super.checkFinalConditions(pm);
-//			sm.worked(1);
-//
-//			ArrayList<IFile> cppFiles = collectDecl();
-//			sm.worked(5);
-//			if (cppFiles.size() > 1) {
-//				status.addInfo(Messages.IntroducePImpl_FunctionInOneFile);
-//				for (IFile file : cppFiles) {
-//					status.addFatalError(Messages.IntroducePImpl_TooManyCppFiles + ": " + file.getFullPath());
-//				}
-//			} else {
-//				if (cppFiles.size() == 1) {
-//					info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
-//				}
-//				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
-//				for (IASTSimpleDeclaration simplDecl : declWithoutDefinition) {
-//					status.addFatalError(Messages.IntroducePImpl_NoDefinitionFound + ": \""
-//							+ simplDecl.getRawSignature() + "\"");
-//				}
-//				if (cppFiles.size() == 0) {
-//					/*
-//					 * TODO: If CreateFileChange is implemented, this must be implemented here.
-//					 * At this time, the file will be created but not removed if the process is aborted.
-//					 */
-//					fileCreated = true;
-//					IPath path = new Path(info.getHeaderUnit().getFilePath()).removeFileExtension().addFileExtension(
-//							CPP_FILE_EXTENSION);
-//					IFile cppFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-//					if (!cppFile.exists()) {
-//						status.addWarning(Messages.IntroducePImpl_CppFileCreated);
-//						// If InputStream is null, file will be marked as notLocal and will not be created!
-//						ByteArrayInputStream dummyStream =new ByteArrayInputStream("".getBytes());
-//						cppFile.create(dummyStream, true, pm);
-//					}
-//					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-//					IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
-//					sourceUnit.setIsHeaderUnit(false);
-//					info.setSourceUnit(sourceUnit);
-//				}
-//			}
-//			sm.done();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return status;
-//	}
-// ---> collectModifications
-	private ArrayList<IFile> collectDecl() throws CoreException {
-		ArrayList<IFile> cppFiles = new ArrayList<IFile>();
-		for (IASTDeclaration tmpMember : info.getClassSpecifier().getDeclarations(false)) {
-			if (NodeHelper.isFunctionDeclarator(tmpMember)) {
-				IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) tmpMember;
-				ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator) simpleDecl.getDeclarators()[0];
-				IBinding bind = funcDecl.getName().resolveBinding();
-				IIndexName[] indexNames = getIndex().findDefinitions(bind);
-				for (IIndexName indexName : indexNames) {
-					IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
-							new Path(indexName.getFileLocation().getFileName()));
-					if (file.getFileExtension().equals(CPP_FILE_EXTENSION)) {
-						if (!cppFiles.contains(file)) {
-							cppFiles.add(file);
-						}
-					}
-				}
-			}
-		}
-		return cppFiles;
-	}
-
-	private ArrayList<IASTSimpleDeclaration> checkDefinitionOfDeclarations(RefactoringStatus status)
-			throws CoreException {
-		boolean publicLabel = false;
-		ArrayList<IASTSimpleDeclaration> declWithoutDefinition = new ArrayList<IASTSimpleDeclaration>();
-		for (IASTDeclaration member : info.getClassSpecifier().getDeclarations(true)) {
-			if (NodeHelper.isEmtypDeclarator(member)) {
-				status.addWarning(Messages.IntroducePImpl_EmptyDeclarationFound + ": \"" + member.getRawSignature()
-						+ "\"");
-			} else if (member instanceof ICPPASTVisibilityLabel) {
-				if (((ICPPASTVisibilityLabel) member).getVisibility() == 3) {
-					publicLabel = false;
-				} else {
-					publicLabel = true;
-				}
-			} else if (NodeHelper.isFunctionDeclarator(member)) {
-				ICPPASTFunctionDefinition definition =null;// DefinitionFinder.getMemberDeclaration(member, tu, refactoringContext, null);//getDefinitionOfDeclaration(member);
-				if (definition == null) {
-					declWithoutDefinition.add((IASTSimpleDeclaration) member);
-				}
-			} else if (member instanceof IASTDeclarator && publicLabel) {
-				status.addWarning(Messages.IntroducePImpl_PublicField);
-			}
-		}
-		return declWithoutDefinition;
 	}
 
 	private ICPPASTFunctionDefinition getDefinitionOfDeclaration(IASTDeclaration member) throws CoreException {
