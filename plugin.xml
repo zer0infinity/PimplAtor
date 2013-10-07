@@ -1,34 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            id="RefactorMenu"
-            nameFilter="*.*"
-            objectClass="org.eclipse.ui.IEditorInput">
-         <menu
-               id="org.eclipse.jdt.ui.refactoring.menu"
-               label="My Refactor"
-               path="additions">
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionDelegate"
-               id="IntroducePImpl.Action"
-               label="Introduce PImpl..."
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/group1">
-         </action>
-      </objectContribution>
-   </extension>
 
-<extension
+	<extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             description="Action set containing coding related C/C++ actions"
-            id="org.eclipse.cdt.ui.CodingActionSet"
+            id="org.eclipse.cdt.internal.ui.refactoring.CodingActionSet"
             label="C/C++ Coding"
             visible="true">
          <menu
@@ -44,45 +22,27 @@
             <separator name="typeGroup3"/>
             <separator name="historyGroup"/>
         </menu>
-
          <action
                class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionDelegate"
                id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions"
-               label="Introduce Pimpl..."
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup">
+               label="Introduce PImpl..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup">
          </action>        
     </actionSet>
    </extension>
    
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            description="My Refactoring Actions"
-            id="my.actionset.id"
-            label="My Refactoring Actions"
-            visible="true">
-         <menu
-               label="Refactor"
-               path="edit"
-               id="org.eclipse.jdt.ui.refactoring.menu">
-            <separator name="undoRedoGroup"/>
-            <separator name="reorgGroup"/>
-            <separator name="codingGroup"/>
-            <separator name="reorgGroup2"/>
-            <separator name="typeGroup"/>
-            <separator name="typeGroup2"/>
-            <separator name="codingGroup2"/>
-            <separator name="typeGroup3"/>
-            <separator name="scriptGroup"/>
-        </menu>
-
+            point="org.eclipse.ui.popupMenus">
+         <viewerContribution
+               id="Menu.viewerContribution1" 
+               targetID="#CEditorContext">
          <action
-               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionDelegate"
-               id="my.refactoring.action"
-               label="Introduce Pimpl..."
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup">
-         </action>        
-    </actionSet>
-   </extension>
-   
+               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplViewActionDelegate" 
+               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.context.actions" 
+               label="Introduce PImpl..." 
+               menubarPath="org.eclipse.cdt.ui.refactoring.menu/codingGroup">
+         </action>           
+
+         </viewerContribution>
+      </extension>
 </plugin>
