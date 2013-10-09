@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-public class IntroducePImplViewActionDelegate implements IEditorActionDelegate {
+public class IntroducePImpEditorActionDelegate implements IEditorActionDelegate {
 	private IEditorPart targetEditor;
 
 	@Override
