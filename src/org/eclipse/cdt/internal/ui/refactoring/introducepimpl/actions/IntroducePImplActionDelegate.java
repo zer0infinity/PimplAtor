@@ -17,10 +17,15 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 
 /**
+ * 
+ * changelog 10/2013
+ * no changes
+ * 
  * Our sample action implements workbench action delegate. The action proxy will
  * be created by the workbench and shown in the UI. When the user tries to use
  * the action, this delegate will be created and execution will be delegated to
  * it.
+ * 
  * 
  * @see IWorkbenchWindowActionDelegate
  */
@@ -35,6 +40,10 @@ public class IntroducePImplActionDelegate implements IWorkbenchWindowActionDeleg
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
+		/*
+		 * changelog 10/2013:
+		 * pimplAction.run() return a null pointer exception
+		 */
 		IntroducePImplAction pimplAction = new IntroducePImplAction(Messages.IntroducePImpl_IntroducePImpl);
 		if (window.getActivePage().getActivePart() instanceof CEditor) {
 			pimplAction.setEditor(window.getActivePage().getActiveEditor());

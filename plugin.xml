@@ -42,7 +42,6 @@
                label="Introduce PImpl..."
                menubarPath="org.eclipse.cdt.ui.refactoring.menu/codingGroup">
          </action>           
-
          </viewerContribution>
       </extension>
 </plugin>
