@@ -18,12 +18,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * 
- * changelog 10/2013:
- * no changes
- */
-
 public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage {
 
 	private Text classNameText;
@@ -73,7 +67,15 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 
 		createCopyTypeGroup(result);
 
-		classNameText.setText(info.getClassSpecifier().getName().toString() + "Impl");
+		/*
+		 * changelog 10/2013:
+		 * getName is null
+		 */
+		classNameText.setText(
+				info.
+				getClassSpecifier().
+				getName().
+				toString() + "Impl");
 		pointerNameText.setText("_impl");
 	}
 

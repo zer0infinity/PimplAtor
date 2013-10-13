@@ -32,7 +32,7 @@ public class IntroducePImplInformation {
 
 	private ICPPASTCompositeTypeSpecifier classSpecifier = null;
 
-	private ITranslationUnit headerUnit;
+	private IASTTranslationUnit headerUnit;
 	private IASTTranslationUnit sourceUnit;
 
 	public IASTTranslationUnit getSourceUnit() {
@@ -75,11 +75,11 @@ public class IntroducePImplInformation {
 		return copyType;
 	}
 
-	public void setHeaderUnit(ITranslationUnit tu) {
-		this.headerUnit = tu;
+	public void setHeaderUnit(IASTTranslationUnit tmpUnit) {
+		this.headerUnit = tmpUnit;
 	}
 
-	public ITranslationUnit getHeaderUnit() {
+	public IASTTranslationUnit getHeaderUnit() {
 		return headerUnit;
 	}
 
