@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class IntroducePImplInformation {
 

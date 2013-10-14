@@ -196,11 +196,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		for (IIndexName indexName : foundDecl) {
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
 					new Path(indexName.getFileLocation().getFileName()));
-			/*
-			 * loadTranslationUnit() => getTranslationUnit()???
-			 */
-//			tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
-			tmpUnit = getAST(tu, null).getTranslationUnit();
+			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
 //					selectedNode = DeclarationFinder.findDeclarationInTranslationUnit(tmpUnit, indexName);
@@ -210,7 +206,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 		if (tmpUnit == null) {
 			/*
-			 * tu.getResource() instead of file()
+			 * tu.getResource() instead of file()??
 			 */
 			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " + tu.getResource().getName());
 		} else {
@@ -277,12 +273,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					status.addFatalError(Messages.IntroducePImpl_TooManyCppFiles + ": " + file.getFullPath());
 				}
 			} else {
-				/*
-				 * iFile??
-				 */
-//				if (cppFiles.size() == 1) {
-//					info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
-//				}
+				if (cppFiles.size() == 1) {
+					info.setSourceUnit(getAST(tu, sm));
+				}
 				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
 				for (IASTSimpleDeclaration simplDecl : declWithoutDefinition) {
 					status.addFatalError(Messages.IntroducePImpl_NoDefinitionFound + ": \""	+ simplDecl.getRawSignature() + "\"");
@@ -302,11 +295,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					/*
-					 * loadTranslationUnit() => getTranslationsUnit()???
-					 */
-//					IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
-					IASTTranslationUnit sourceUnit = getAST(tu, pm).getTranslationUnit();
+					IASTTranslationUnit sourceUnit = getAST(tu, pm);
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
 				}
@@ -340,14 +329,12 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return cppFiles;
 	}
 
-	private ArrayList<IASTSimpleDeclaration> checkDefinitionOfDeclarations(RefactoringStatus status)
-			throws CoreException {
+	private ArrayList<IASTSimpleDeclaration> checkDefinitionOfDeclarations(RefactoringStatus status) throws CoreException {
 		boolean publicLabel = false;
 		ArrayList<IASTSimpleDeclaration> declWithoutDefinition = new ArrayList<IASTSimpleDeclaration>();
 		for (IASTDeclaration member : info.getClassSpecifier().getDeclarations(true)) {
 			if (NodeHelper.isEmtypDeclarator(member)) {
-				status.addWarning(Messages.IntroducePImpl_EmptyDeclarationFound + ": \"" + member.getRawSignature()
-						+ "\"");
+				status.addWarning(Messages.IntroducePImpl_EmptyDeclarationFound + ": \"" + member.getRawSignature()	+ "\"");
 			} else if (member instanceof ICPPASTVisibilityLabel) {
 				if (((ICPPASTVisibilityLabel) member).getVisibility() == 3) {
 					publicLabel = false;

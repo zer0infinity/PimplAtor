@@ -7,8 +7,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplRefactoringRunner;
 import org.eclipse.cdt.ui.refactoring.actions.RefactoringAction;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.window.IShellProvider;
