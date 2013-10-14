@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -81,7 +82,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
@@ -119,6 +119,38 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		super(celem, selection, null);
 		this.info = info;
 		name = Messages.IntroducePImpl_IntroducePImpl;
+	}
+	
+	/*
+	 * temp code instead of DeclarationFinder class
+	 * try using findAllMarkedNames later
+	 */
+	public IASTName findDeclarationInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
+		final Container<IASTName> defName = new Container<IASTName>();
+		try {
+			getAST(tu, null).accept(new ASTVisitor() {
+				{
+					shouldVisitNames = true;
+				}
+				@Override
+				public int visit(IASTName name) {
+					if (name.isDeclaration() && name.getNodeLocations().length > 0) {
+						IASTNodeLocation nodeLocation = name.getNodeLocations()[0];
+						if (indexName.getNodeOffset() == nodeLocation.getNodeOffset() 
+								&& indexName.getNodeLength() == nodeLocation.getNodeLength()
+								&& new Path(indexName.getFileLocation().getFileName()).equals(new Path(nodeLocation.asFileLocation().getFileName()))) {
+							defName.setObject(name);
+							return ASTVisitor.PROCESS_ABORT;
+						}
+					}
+					return ASTVisitor.PROCESS_CONTINUE;
+				}
+
+			});
+		} catch (OperationCanceledException | CoreException e) {
+			e.printStackTrace();
+		}
+		return defName.getObject();
 	}
 
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
@@ -159,17 +191,15 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	}
 
 	private IASTDeclaration findFirstSelectedNode(final Region textSelection, ITranslationUnit tu) {
-
 		final Container<IASTDeclaration> container = new Container<IASTDeclaration>();
-
 		try {
 			getAST(tu,null).accept(new ASTVisitor() {
 				{
 					shouldVisitDeclarations = true;
 				}
-
 				public int visit(IASTDeclaration declaration) {
 					/*
+					 * TODO:
 					 * changelog 10/2013:
 					 * isSelectionOnExpression() ersetzt.
 					 */
@@ -184,7 +214,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-
 		return container.getObject();
 	}
 	
@@ -194,20 +223,19 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
 		IASTTranslationUnit tmpUnit = null;
 		for (IIndexName indexName : foundDecl) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
-					new Path(indexName.getFileLocation().getFileName()));
 			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
-//					selectedNode = DeclarationFinder.findDeclarationInTranslationUnit(tmpUnit, indexName);
+					/*
+					 * TODO:
+					 * DeclarationFinder
+					 */
+					selectedNode = findDeclarationInTranslationUnit(tmpUnit, indexName);
 					break;
 				}
 			}
 		}
 		if (tmpUnit == null) {
-			/*
-			 * tu.getResource() instead of file()??
-			 */
 			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " + tu.getResource().getName());
 		} else {
 			info.setHeaderUnit(tmpUnit);
@@ -227,11 +255,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			}
 		} else {
 			try {
-				getAST(getTranslationUnit(),new NullProgressMonitor()).accept(new ASTVisitor() {
+				getAST(tu , null).accept(new ASTVisitor() {
 					{
 						shouldVisitDeclSpecifiers = true;
 					}
-
 					public int visit(IASTDeclSpecifier declSpec) {
 						if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 							info.getClassSpecifiers().add((ICPPASTCompositeTypeSpecifier) declSpec);
@@ -253,7 +280,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	
 	/*
 	 * public RefactoringStatus checkFinalConditions() is final
-	 * trying to use override protected RefactoringStatus checkFinalConditions()
+	 * trying to use protected RefactoringStatus checkFinalConditions()
 	 */
 	@Override
 	protected RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext) {
@@ -262,7 +289,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		try {
 			sm.worked(0);
 
-			status = super.checkFinalConditions(pm);
+			status = super.checkFinalConditions(pm, checkContext);
 			sm.worked(1);
 
 			ArrayList<IFile> cppFiles = collectDecl();
@@ -364,11 +391,18 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
-//				DefinitionFinder.getDefinition(info.getSourceUnit(), new CRefactoringContext(this), null);
-				cppDecName = null;//DefinitionFinder.//DeclarationFinder.findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
+				/*
+				 * TODO:
+				 * DeclarationFinder ersetzen
+				 */
+				cppDecName = findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
 				
 			} else if (info.getHeaderUnit() != null) {
-				cppDecName = null;//DeclarationFinder.findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
+				/*
+				 * TODO:
+				 * DeclarationFinder ersetzen
+				 */
+				cppDecName = findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
 			}
 			if (!(cppDecName == null)) {
 				while (!(cppDecName instanceof ICPPASTFunctionDefinition)) {

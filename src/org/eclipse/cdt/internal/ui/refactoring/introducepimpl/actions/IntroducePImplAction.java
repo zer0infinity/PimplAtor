@@ -18,7 +18,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 /**
  * changelog 10/2013:
- * do i really need iFile???
+ * do i really need iFile?
  *
  */
 @SuppressWarnings("restriction")
