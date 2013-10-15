@@ -16,11 +16,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-/**
- * changelog 10/2013:
- * do i really need iFile?
- *
- */
 @SuppressWarnings("restriction")
 public class IntroducePImplAction extends RefactoringAction {
 
@@ -30,14 +25,12 @@ public class IntroducePImplAction extends RefactoringAction {
 
 	public void run(IShellProvider shellProvider, ICElement elem) {
 		if (elem instanceof ISourceReference) {
-//			IFile file = null;
 			ITextSelection sel = null;
 
 			IWorkbenchPart part = ((IViewSite) shellProvider).getWorkbenchWindow().getActivePage().getActivePart();
 			// Call from Project-Explorer or C/C++ Projects
 			if (part instanceof ProjectExplorer || part instanceof CView) {
 				if (elem.getResource().getFileExtension().equals("h")) {
-//					file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(((ITranslationUnit) elem).getLocation());
 					sel = new TextSelection(0, 0);
 				}
 			}
@@ -64,18 +57,12 @@ public class IntroducePImplAction extends RefactoringAction {
 				while (!(parent instanceof IWorkingCopy)){
 					parent = parent.getParent();
 				}
-//				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(parent.getResource().getLocation());
 			}
-//			new IntroducePImplRefactoringRunner(file, sel, elem, shellProvider).run();
 			new IntroducePImplRefactoringRunner(sel, elem, shellProvider).run();
 		}
 	}
 
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
-//		IResource res = wc.getResource();
-//		if (res instanceof IFile) {
-//			new IntroducePImplRefactoringRunner((IFile) res, selection, null, shellProvider).run();
-//		}
-		new IntroducePImplRefactoringRunner(selection, null, shellProvider).run();
+		new IntroducePImplRefactoringRunner(selection, wc, shellProvider).run();
 	}
 }

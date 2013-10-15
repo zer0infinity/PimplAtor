@@ -74,6 +74,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
@@ -118,6 +119,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
+		setContext(new CRefactoringContext(this));
 		name = Messages.IntroducePImpl_IntroducePImpl;
 	}
 	
@@ -153,6 +155,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return defName.getObject();
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
 		SubMonitor sm = SubMonitor.convert(pm, 4);
 		RefactoringStatus status = new RefactoringStatus();
@@ -167,7 +170,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			sm.worked(2);
 
 			if (tu.isHeaderUnit()) {
-				info.setHeaderUnit(tu.getAST());
+				info.setHeaderUnit(getAST(tu, null));
 			} else {
 				while (!(selectedNode instanceof CPPASTFunctionDefinition) && selectedNode != null) {
 					selectedNode = selectedNode.getParent();
@@ -223,13 +226,15 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
 		IASTTranslationUnit tmpUnit = null;
 		for (IIndexName indexName : foundDecl) {
+			/**
+			 * TODO:
+			 * TranslationUnitHelper
+			 * tu is null
+			 */
+			//tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
 			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
-					/*
-					 * TODO:
-					 * DeclarationFinder
-					 */
 					selectedNode = findDeclarationInTranslationUnit(tmpUnit, indexName);
 					break;
 				}
@@ -278,10 +283,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return (CPPASTCompositeTypeSpecifier) node;
 	}
 	
-	/*
-	 * public RefactoringStatus checkFinalConditions() is final
-	 * trying to use protected RefactoringStatus checkFinalConditions()
-	 */
 	@Override
 	protected RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext) {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
@@ -301,6 +302,12 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 			} else {
 				if (cppFiles.size() == 1) {
+					/**
+					 * TODO:
+					 * TranslationUnitHelper
+					 * tu is null
+					 */
+					//info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
 					info.setSourceUnit(getAST(tu, sm));
 				}
 				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
@@ -322,7 +329,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					IASTTranslationUnit sourceUnit = getAST(tu, pm);
+					/**
+					 * TODO:
+					 * TranslationUnitHelper
+					 * tu is null
+					 */
+					//IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
+					IASTTranslationUnit sourceUnit = info.getSourceUnit();
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
 				}
@@ -391,17 +404,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
-				/*
-				 * TODO:
-				 * DeclarationFinder ersetzen
-				 */
 				cppDecName = findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
-				
 			} else if (info.getHeaderUnit() != null) {
-				/*
-				 * TODO:
-				 * DeclarationFinder ersetzen
-				 */
 				cppDecName = findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
 			}
 			if (!(cppDecName == null)) {

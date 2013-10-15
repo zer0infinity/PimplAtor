@@ -67,17 +67,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 
 		createCopyTypeGroup(result);
 
-		/*
-		 * TODO:
-		 * changelog 10/2013:
-		 * getClassSpecifier is null
-		 */
-		classNameText.setText(
-				info
-				.getClassSpecifier()
-//				.getName()
-//				.toString()
-				+ "Impl");
+		classNameText.setText(info.getClassSpecifier().getName().toString()	+ "Impl");
 		pointerNameText.setText("_impl");
 	}
 

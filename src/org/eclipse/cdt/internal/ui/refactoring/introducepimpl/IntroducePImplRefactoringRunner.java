@@ -8,11 +8,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
 
-/**
- * changelog 10/2013:
- * removed lockIndex()/ unlockIndex()
- *
- */
 @SuppressWarnings("restriction")
 public class IntroducePImplRefactoringRunner extends RefactoringRunner {
 
