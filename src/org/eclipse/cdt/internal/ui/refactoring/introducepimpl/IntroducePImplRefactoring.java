@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -168,11 +169,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					shouldVisitDeclarations = true;
 				}
 				public int visit(IASTDeclaration declaration) {
-					/*
-					 * TODO:
-					 * changelog 10/2013:
-					 * isSelectionOnExpression() ersetzt.
-					 */
 					if (SelectionHelper.isNodeInsideSelection(declaration, textSelection)) {
 						container.setObject((IASTDeclaration) declaration);
 					}
@@ -193,11 +189,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
 		IASTTranslationUnit tmpUnit = null;
 		for (IIndexName indexName : foundDecl) {
-			/**
-			 * TODO:
-			 * TranslationUnitHelper
-			 */
-			//tmpUnit = TranslationUnitHelper.loadTranslationUnit(file, true);
 			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
@@ -268,11 +259,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 			} else {
 				if (cppFiles.size() == 1) {
-					/**
-					 * TODO:
-					 * TranslationUnitHelper
-					 */
-					//info.setSourceUnit(TranslationUnitHelper.loadTranslationUnit(cppFiles.get(0), true));
+					ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(cppFiles.get(0));
 					info.setSourceUnit(getAST(tu, sm));
 				}
 				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
@@ -294,11 +281,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					/**
-					 * TODO:
-					 * TranslationUnitHelper
-					 */
-					//IASTTranslationUnit sourceUnit = TranslationUnitHelper.loadTranslationUnit(cppFile, true);
 					IASTTranslationUnit sourceUnit = info.getSourceUnit();
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
@@ -381,7 +363,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 		return null;
 	}
-
+	
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) {
 		final int TICK_COUNT_COLLECT_MODIFICATIONS = 9;
 		int tickCount = TICK_COUNT_COLLECT_MODIFICATIONS + info.getClassSpecifier().getDeclarations(true).length;
