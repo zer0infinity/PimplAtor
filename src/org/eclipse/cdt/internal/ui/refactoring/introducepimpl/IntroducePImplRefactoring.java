@@ -97,13 +97,12 @@ import org.eclipse.text.edits.TextEditGroup;
 public class IntroducePImplRefactoring extends CRefactoring {
 
 	private static final String NONCOPYABLE = "noncopyable";
-	private static final String TR1 = "tr1";
 	private static final String STD = "std";
 	private static final String SHARED_PTR = "shared_ptr";
 	private static final String BOOST = "boost";
 	private static final String INCLUDE_LABEL = "#include ";
 	private static final String BOOST_SHARED_PTR_INCLUDE = "<boost/shared_ptr.hpp>";
-	private static final String TR1_SHARED_PTR_INCLUDE = "<tr1/memory>";
+	private static final String SHARED_PTR_INCLUDE = "<memory>";
 	private static final String BOOST_NONCOPYABLE_INCLUDE = "<boost/noncopyable.hpp>";
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	private static final String COPY_PARAM_NAME = "toCopy";
@@ -741,7 +740,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			if (info.getLibraryType() == IntroducePImplInformation.LibraryType.boost) {
 				insertInclude(BOOST_SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			} else {
-				insertInclude(TR1_SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
+				insertInclude(SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			}
 			includesInsserted = true;
 		}
@@ -969,7 +968,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			qname.addName(new CPPASTName(BOOST.toCharArray()));
 		} else {
 			qname.addName(new CPPASTName(STD.toCharArray()));
-			qname.addName(new CPPASTName(TR1.toCharArray()));
 		}
 		qname.addName(sharedPtr);
 
