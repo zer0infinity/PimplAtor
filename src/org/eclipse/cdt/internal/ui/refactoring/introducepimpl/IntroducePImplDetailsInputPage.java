@@ -33,7 +33,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 	// Library Group
 	private Group libraryTypeGroup;
 	private Button boostRadioButton;
-	private Button tr1RadioButton;
+	private Button cpp11RadioButton;
 	// Class Type Group
 	private Button structRadioButton;
 	private Button classRadioButton;
@@ -196,9 +196,9 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 			}
 		});
 
-		tr1RadioButton = new Button(libraryTypeGroup, SWT.RADIO);
-		tr1RadioButton.setText(Messages.IntroducePImpl_TR1);
-		tr1RadioButton.addSelectionListener(new SelectionListener() {
+		cpp11RadioButton = new Button(libraryTypeGroup, SWT.RADIO);
+		cpp11RadioButton.setText(Messages.IntroducePImpl_STD);
+		cpp11RadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
 				info.setLibraryType(IntroducePImplInformation.LibraryType.tr1);
