@@ -5,8 +5,6 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
  * The wizard page for Introduce PImpl Refactoring, creates the UI page.
- * 
- * @author: Andrea Berweger 
  */
 public class IntroducePImplRefactoringWizard extends RefactoringWizard {
 
