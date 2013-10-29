@@ -30,6 +30,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 	// Pointer Type Group
 	private Button standardRadioButton;
 	private Button sharedButton;
+	private Button uniqueButton;
 	// Library Group
 	private Group libraryTypeGroup;
 	private Button boostRadioButton;
@@ -172,6 +173,20 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		uniqueButton = new Button(ptrTypeGroup, SWT.RADIO);
+		uniqueButton.setText(Messages.IntroducePImpl_UniquePtr);
+		uniqueButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setPointerType(IntroducePImplInformation.PointerType.unique);
+				shallowRadioButton.setEnabled(true);
+				libraryTypeGroup.setVisible(false);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		createLibraryTypeGroup(ptrTypeGroup);
 	}
@@ -201,7 +216,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		cpp11RadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setLibraryType(IntroducePImplInformation.LibraryType.tr1);
+				info.setLibraryType(IntroducePImplInformation.LibraryType.std);
 				shallowRadioButton.setEnabled(true);
 			}
 

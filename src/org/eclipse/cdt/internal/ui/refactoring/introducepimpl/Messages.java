@@ -22,6 +22,7 @@ public class Messages extends NLS {
 	public static String IntroducePImpl_Class;
 	public static String IntroducePImpl_StandardPtr;
 	public static String IntroducePImpl_SharedPtr;
+	public static String IntroducePImpl_UniquePtr;
 	public static String IntroducePImpl_Boost;
 	public static String IntroducePImpl_STD;
 	public static String IntroducePImpl_DeepCopy;

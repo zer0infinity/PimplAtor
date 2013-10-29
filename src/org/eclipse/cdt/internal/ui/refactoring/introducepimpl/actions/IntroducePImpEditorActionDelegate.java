@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
+@SuppressWarnings("restriction")
 public class IntroducePImpEditorActionDelegate implements IEditorActionDelegate {
 	private IEditorPart targetEditor;
 

@@ -99,10 +99,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private static final String NONCOPYABLE = "noncopyable";
 	private static final String STD = "std";
 	private static final String SHARED_PTR = "shared_ptr";
+	private static final String UNIQUE_PTR = "unique_ptr";
 	private static final String BOOST = "boost";
 	private static final String INCLUDE_LABEL = "#include ";
 	private static final String BOOST_SHARED_PTR_INCLUDE = "<boost/shared_ptr.hpp>";
-	private static final String SHARED_PTR_INCLUDE = "<memory>";
+	private static final String SHARED_AND_UNIQUE_PTR_INCLUDE = "<memory>";
 	private static final String BOOST_NONCOPYABLE_INCLUDE = "<boost/noncopyable.hpp>";
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	private static final String COPY_PARAM_NAME = "toCopy";
@@ -684,8 +685,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.standard) {
 			headerClassNode.insertBefore(null, createSimplePointer(), new TextEditGroup(
 					Messages.IntroducePImpl_Rewrite_PointerInsertHeader));
-		} else {
+		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.shared) {
 			headerClassNode.insertBefore(null, createSharedPointer(), new TextEditGroup(
+					Messages.IntroducePImpl_Rewrite_PointerInsertHeader));
+		} else {
+			headerClassNode.insertBefore(null, createUniquePointer(), new TextEditGroup(
 					Messages.IntroducePImpl_Rewrite_PointerInsertHeader));
 		}
 	}
@@ -740,9 +744,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			if (info.getLibraryType() == IntroducePImplInformation.LibraryType.boost) {
 				insertInclude(BOOST_SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			} else {
-				insertInclude(SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
+				insertInclude(SHARED_AND_UNIQUE_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			}
 			includesInsserted = true;
+		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.unique) {
+			insertInclude(SHARED_AND_UNIQUE_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 		}
 		if (info.getCopyType() == IntroducePImplInformation.CopyType.noncopyable) {
 			insertInclude(BOOST_NONCOPYABLE_INCLUDE, headerRewrite, info.getHeaderUnit());
@@ -951,7 +957,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		includeSpecifier.setName(noncopyableName);
 		return includeSpecifier;
 	}
-
+	
 	private IASTSimpleDeclaration createSharedPointer() {
 		ICPPASTElaboratedTypeSpecifier declSpec = new CPPASTElaboratedTypeSpecifier();
 		declSpec.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
@@ -970,6 +976,32 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			qname.addName(new CPPASTName(STD.toCharArray()));
 		}
 		qname.addName(sharedPtr);
+
+		CPPASTNamedTypeSpecifier typeSpec = new CPPASTNamedTypeSpecifier(qname);
+
+		IASTDeclarator pointerDeclarator = new CPPASTDeclarator();
+		pointerDeclarator.setName(new CPPASTName(info.getPointerNameImpl().toCharArray()));
+
+		IASTSimpleDeclaration declaration = new CPPASTSimpleDeclaration();
+		declaration.setDeclSpecifier(typeSpec);
+		declaration.addDeclarator(pointerDeclarator);
+		return declaration;
+	}
+	
+	private IASTSimpleDeclaration createUniquePointer() {
+		ICPPASTElaboratedTypeSpecifier declSpec = new CPPASTElaboratedTypeSpecifier();
+		declSpec.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
+		declSpec.setKind(info.getClassType());
+
+		CPPASTTypeId genericType = new CPPASTTypeId();
+		genericType.setDeclSpecifier((IASTDeclSpecifier) declSpec);
+
+		CPPASTTemplateId uniquePtr = new CPPASTTemplateId(new CPPASTName(UNIQUE_PTR.toCharArray()));
+		uniquePtr.addTemplateArgument(genericType);
+
+		CPPASTQualifiedName qname = new CPPASTQualifiedName();
+		qname.addName(new CPPASTName(STD.toCharArray()));
+		qname.addName(uniquePtr);
 
 		CPPASTNamedTypeSpecifier typeSpec = new CPPASTNamedTypeSpecifier(qname);
 

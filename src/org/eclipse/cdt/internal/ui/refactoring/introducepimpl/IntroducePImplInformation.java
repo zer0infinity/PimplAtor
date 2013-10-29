@@ -8,11 +8,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 public class IntroducePImplInformation {
 
 	public enum PointerType {
-		standard, shared
+		standard, shared, unique
 	}
 
 	public enum LibraryType {
-		boost, tr1
+		boost, std
 	}
 
 	public enum CopyType {
