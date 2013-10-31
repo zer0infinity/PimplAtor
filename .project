@@ -25,11 +25,4 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>org.eclipse.cdt</name>
-			<type>2</type>
-			<location>D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt</location>
-		</link>
-	</linkedResources>
 </projectDescription>
