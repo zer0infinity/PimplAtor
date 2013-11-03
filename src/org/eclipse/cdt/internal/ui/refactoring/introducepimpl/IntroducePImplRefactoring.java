@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -46,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBaseSpecifier;
@@ -125,6 +125,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
+		/**
+		 * TODO: replace "Magic Numbers"
+		 */
 		SubMonitor sm = SubMonitor.convert(pm, 4);
 		RefactoringStatus status = new RefactoringStatus();
 		try {
@@ -198,7 +201,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			}
 		}
 		if (tmpUnit == null) {
-			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound + ": " + tu.getResource().getName());
+			status.addFatalError(Messages.IntroducePImpl_HeaderFileNotFound);
 		} else {
 			info.setHeaderUnit(tmpUnit);
 		}
@@ -242,12 +245,17 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	
 	@Override
 	protected RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext) {
+		/**
+		 * TODO: replace "Magic Numbers"
+		 */
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		RefactoringStatus status = new RefactoringStatus();
 		try {
 			sm.worked(0);
-
-			status = super.checkFinalConditions(pm, checkContext);
+			/**
+			 * TODO: remove later.
+			 */
+//			status = super.checkFinalConditions(pm, checkContext);
 			sm.worked(1);
 
 			ArrayList<IFile> cppFiles = collectDecl();
@@ -259,7 +267,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 			} else {
 				if (cppFiles.size() == 1) {
-					ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(cppFiles.get(0));
+					ITranslationUnit tu = CoreModelUtil.findTranslationUnit(cppFiles.get(0));
 					info.setSourceUnit(getAST(tu, sm));
 				}
 				ArrayList<IASTSimpleDeclaration> declWithoutDefinition = checkDefinitionOfDeclarations(status);
