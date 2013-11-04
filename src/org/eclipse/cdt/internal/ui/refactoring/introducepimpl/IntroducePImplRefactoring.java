@@ -905,7 +905,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		implTypeSpecifier.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
-		initializer.setInitializer(newExpression.getInitializer());
+		initializer.setInitializerValue(newExpression);
+//		initializer.setInitializer(newExpression.getInitializer());
 		return initializer;
 	}
 
@@ -931,7 +932,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		oldImplPointerField.setFieldName(pointerName.copy());
 		oldImplReference.setOperand(oldImplPointerField);
 		newExpression.setNewInitializer(oldImplReference);
-		initializer.setInitializer(newExpression.getInitializer());
+		initializer.setInitializerValue(newExpression);
+//		initializer.setInitializer(newExpression.getInitializer());
 		return initializer;
 	}
 
