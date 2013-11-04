@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -849,7 +850,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTCompoundStatement compoundStatement = new CPPASTCompoundStatement();
 		ICPPASTFunctionCallExpression memberToCallExpression = new CPPASTFunctionCallExpression();
 
-		memberToCallExpression.setParameterExpression(createParameterExpression(functionDefinition));
+		IASTInitializerClause[] createParameterExpression = createParameterExpression(functionDefinition);
+		memberToCallExpression.setArguments(createParameterExpression);
 		ICPPASTFieldReference fieldReference = new CPPASTFieldReference();
 		fieldReference.setIsPointerDereference(true);
 		IASTName methodName = ((ICPPASTFunctionDefinition) functionDefinition).getDeclarator().getName().getLastName()
@@ -933,15 +935,15 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return initializer;
 	}
 
-	private IASTExpression createParameterExpression(IASTDeclaration member) {
-		IASTExpression parameterExpression = null;
+	private IASTExpression[] createParameterExpression(IASTDeclaration member) {
+		IASTExpression[] parameterExpression = null;
 		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) ((CPPASTFunctionDefinition) member)
 				.getDeclarator()).getParameters();
 		if (parameters != null) {
 			if (parameters.length == 1) {
 				IASTIdExpression singleParameterExpression = new CPPASTIdExpression();
 				singleParameterExpression.setName(parameters[0].getDeclarator().getName().copy());
-				parameterExpression = singleParameterExpression;
+				parameterExpression = new IASTExpression[] { singleParameterExpression };
 			} else {
 				ICPPASTExpressionList parameterList = new CPPASTExpressionList();
 				for (IASTParameterDeclaration parameter : parameters) {
@@ -949,7 +951,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					expression.setName(parameter.getDeclarator().getName().copy());
 					parameterList.addExpression(expression);
 				}
-				parameterExpression = parameterList;
+				parameterExpression = parameterList.getExpressions();
 			}
 		}
 		return parameterExpression;
