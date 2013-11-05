@@ -116,11 +116,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private boolean isStatic = false;
 	private IntroducePImplInformation info;
 	private ArrayList<IASTSimpleDeclaration> privateStaticList;
+	private CRefactoringContext context;
 
 	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
-		setContext(new CRefactoringContext(this));
+		context = new CRefactoringContext(this);
+		setContext(context);
 		name = Messages.IntroducePImpl_IntroducePImpl;
 	}
 	

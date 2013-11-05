@@ -3,6 +3,7 @@ package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage {
 
 	private Text classNameText;
@@ -42,9 +44,16 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 	private Pattern classnameDiscouraged = Pattern.compile("[A-Z].*");
 	private Pattern pointernameDiscouraged = Pattern.compile("(_|[a-z]).*");
 	private Pattern nameError = Pattern.compile("(_|[A-Z]|[a-z]|[0-9])*", Pattern.UNICODE_CASE);
+	private CRefactoringContext context;
 
-	public IntroducePImplDetailsInputPage(String name, IntroducePImplInformation info) {
+	public IntroducePImplDetailsInputPage(String name, IntroducePImplInformation info, CRefactoringContext context) {
 		super(name, info);
+		this.context = context;
+	}
+	
+	@Override
+	public void dispose() {
+		context.dispose();
 	}
 
 	public void createControl(Composite parent) {
