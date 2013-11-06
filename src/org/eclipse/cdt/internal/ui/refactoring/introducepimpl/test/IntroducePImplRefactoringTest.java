@@ -1,6 +1,8 @@
 
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation;
@@ -31,7 +33,7 @@ public class IntroducePImplRefactoringTest extends MockObjectTestCase {
 		context.checking(new Expectations() {{
 			allowing(iwcopy).getTranslationUnit();
 			allowing(iwcopy).getSourceRange();
-			allowing(selection).isEmpty();
+			oneOf(selection);
 		}});
 		info = new IntroducePImplInformation();
 		refactoring = new IntroducePImplRefactoring(selection, iwcopy, info);
@@ -46,10 +48,9 @@ public class IntroducePImplRefactoringTest extends MockObjectTestCase {
 	public void testCheckFinalCondition() {
 		final ICPPASTCompositeTypeSpecifier classSpecifier = context.mock(ICPPASTCompositeTypeSpecifier.class);
 		context.checking(new Expectations() {{
-			allowing(classSpecifier).getName();
-			allowing(classSpecifier).getParent().getParent();
-			allowing(classSpecifier).getDeclarations(false);
-			allowing(classSpecifier).getDeclarations(true);
+			allowing(classSpecifier).getName(); will(returnValue(IASTName.class));
+			allowing(classSpecifier).getParent().getParent(); will(returnValue(IASTNode.class));
+			allowing(classSpecifier).getDeclarations(with(any(Boolean.class)));
 		}});
 		info.setClassSpecifier(classSpecifier);
 		RefactoringStatus status = null;

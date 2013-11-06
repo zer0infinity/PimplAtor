@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock
-Bundle-SymbolicName: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock
+Bundle-SymbolicName: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test
 Bundle-Version: 1.0.0
 Require-Bundle: org.junit;bundle-version="4.11.0",
  org.eclipse.cdt.internal.ui.refactoring.introducepimpl;bundle-version="1.0.0",
