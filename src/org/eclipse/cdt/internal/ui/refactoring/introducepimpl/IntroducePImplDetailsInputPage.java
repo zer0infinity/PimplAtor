@@ -162,6 +162,10 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 			public void widgetSelected(SelectionEvent e) {
 				info.setPointerType(IntroducePImplInformation.PointerType.standard);
 				shallowRadioButton.setEnabled(false);
+				if(shallowRadioButton.getSelection())
+					shallowRadioButton.setSelection(false);
+					if(!noCopyRadioButton.getSelection() && !nonCopyableRadioButton.getSelection())
+						deepRadioButton.setSelection(true);
 				libraryTypeGroup.setVisible(false);
 			}
 

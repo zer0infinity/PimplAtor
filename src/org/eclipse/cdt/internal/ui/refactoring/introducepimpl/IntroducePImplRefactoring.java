@@ -14,7 +14,9 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -848,8 +850,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTCompoundStatement compoundStatement = new CPPASTCompoundStatement();
 		ICPPASTFunctionCallExpression memberToCallExpression = new CPPASTFunctionCallExpression();
 
-		IASTInitializerClause[] createParameterExpression = createParameterExpression(functionDefinition);
-		memberToCallExpression.setArguments(createParameterExpression);
+		/**
+		 * TODO:
+		 */
+		memberToCallExpression.setArguments(createParameterExpression(functionDefinition));
 		ICPPASTFieldReference fieldReference = new CPPASTFieldReference();
 		fieldReference.setIsPointerDereference(true);
 		IASTName methodName = ((ICPPASTFunctionDefinition) functionDefinition).getDeclarator().getName().getLastName()
@@ -882,12 +886,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		initializer.setMemberInitializerId(pointerName);
 		ICPPASTNewExpression newExpression = new CPPASTNewExpression();
 
-		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) memberDefinition.getDeclarator())
-				.getParameters();
+		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) memberDefinition.getDeclarator()).getParameters();
 		if (parameters.length == 1) {
 			IASTIdExpression paramExpression = new CPPASTIdExpression();
 			paramExpression.setName(parameters[0].getDeclarator().getName().copy());
 			newExpression.setNewInitializer(paramExpression);
+//			IASTInitializer init = null;
+//			newExpression.setInitializer(init);
 		} else if (parameters.length > 1) {
 			ICPPASTExpressionList parameterList = new CPPASTExpressionList();
 			for (IASTParameterDeclaration parameter : parameters) {
@@ -896,6 +901,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				parameterList.addExpression(parameterExpression);
 			}
 			newExpression.setNewInitializer(parameterList);
+//			IASTInitializerList init = null;
+//			newExpression.setInitializer(init);
 		}
 
 		IASTTypeId typeId = new CPPASTTypeId();
@@ -903,6 +910,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		implTypeSpecifier.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
+		/**
+		 * TODO: remove old code
+		 */
 		initializer.setInitializerValue(newExpression);
 //		initializer.setInitializer(newExpression.getInitializer());
 		return initializer;
@@ -930,6 +940,9 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		oldImplPointerField.setFieldName(pointerName.copy());
 		oldImplReference.setOperand(oldImplPointerField);
 		newExpression.setNewInitializer(oldImplReference);
+		/**
+		 * TODO: remove old code
+		 */
 		initializer.setInitializerValue(newExpression);
 //		initializer.setInitializer(newExpression.getInitializer());
 		return initializer;
