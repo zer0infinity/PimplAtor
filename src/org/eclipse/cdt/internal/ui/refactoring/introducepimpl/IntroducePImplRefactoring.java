@@ -75,7 +75,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
@@ -116,13 +115,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private boolean isStatic = false;
 	private IntroducePImplInformation info;
 	private ArrayList<IASTSimpleDeclaration> privateStaticList;
-	private CRefactoringContext context;
 
 	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
-		context = new CRefactoringContext(this);
-		setContext(context);
 		name = Messages.IntroducePImpl_IntroducePImpl;
 	}
 	
