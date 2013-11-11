@@ -14,9 +14,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -79,7 +76,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -173,7 +169,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					shouldVisitDeclarations = true;
 				}
 				public int visit(IASTDeclaration declaration) {
-					if (SelectionHelper.isNodeInsideSelection(declaration, textSelection)) {
+					if (org.eclipse.cdt.internal.ui.refactoring.introducepimpl.SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
 						container.setObject((IASTDeclaration) declaration);
 					}
 					return super.visit(declaration);
@@ -193,6 +189,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
 		IASTTranslationUnit tmpUnit = null;
 		for (IIndexName indexName : foundDecl) {
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(indexName.getFileLocation().getFileName()));
+			ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
 			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
@@ -250,13 +248,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		 * TODO: replace "Magic Numbers"
 		 */
 		SubMonitor sm = SubMonitor.convert(pm, 10);
-		RefactoringStatus status = new RefactoringStatus();
+		RefactoringStatus status = null;
 		try {
 			sm.worked(0);
-			/**
-			 * TODO: remove later.
-			 */
-//			status = super.checkFinalConditions(pm, checkContext);
+			status = super.checkFinalConditions(pm, checkContext);
 			sm.worked(1);
 
 			ArrayList<IFile> cppFiles = collectDecl();
@@ -290,7 +285,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					IASTTranslationUnit sourceUnit = info.getSourceUnit();
+//					IASTTranslationUnit sourceUnit = info.getSourceUnit();
+					IASTTranslationUnit sourceUnit = CoreModelUtil.findTranslationUnit(cppFile).getAST();
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
 				}
