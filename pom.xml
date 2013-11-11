@@ -16,4 +16,9 @@
       </plugin>
     </plugins>
   </build>
+  <dependency>
+  <groupId>org.jmock</groupId>
+  <artifactId>jmock-junit4</artifactId>
+  <version>2.6.0</version>
+  </dependency>
 </project>

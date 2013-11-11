@@ -1,5 +1,8 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
 
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.DeclarationFinderTest;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.IntroducePImplRefactoringTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

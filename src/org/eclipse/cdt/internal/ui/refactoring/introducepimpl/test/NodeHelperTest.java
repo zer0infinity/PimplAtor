@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
 
+import junit.framework.TestCase;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -17,11 +19,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.NodeHelper;
-import org.jmock.integration.junit3.MockObjectTestCase;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
-public class NodeHelperTest extends MockObjectTestCase {
+public class NodeHelperTest extends TestCase {
 
 	private ICPPASTFunctionDefinition createConstructor(String classname, int type, boolean qualifiedname) {
 		CPPASTFunctionDefinition functionDef = new CPPASTFunctionDefinition();

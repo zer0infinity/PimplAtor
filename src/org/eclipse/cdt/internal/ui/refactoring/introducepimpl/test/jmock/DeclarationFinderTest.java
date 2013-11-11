@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
+package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
