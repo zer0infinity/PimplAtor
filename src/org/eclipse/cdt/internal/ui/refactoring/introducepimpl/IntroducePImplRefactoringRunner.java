@@ -22,13 +22,14 @@ public class IntroducePImplRefactoringRunner extends RefactoringRunner {
 		CRefactoring refactoring = new IntroducePImplRefactoring(selection, element, info);
 		CRefactoringContext context = new CRefactoringContext(refactoring);
 		refactoring.setContext(context);
-		IntroducePImplRefactoringWizard wizard = new IntroducePImplRefactoringWizard(refactoring, info, context);
+		IntroducePImplRefactoringWizard wizard = new IntroducePImplRefactoringWizard(refactoring, info);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);
-
 		try {
 			operator.run(shellProvider.getShell(), refactoring.getName());
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+		} finally {
+			context.dispose();
 		}
 	}
 }

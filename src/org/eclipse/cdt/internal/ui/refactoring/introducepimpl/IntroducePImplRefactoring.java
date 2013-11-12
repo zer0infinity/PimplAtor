@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeleteExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTElaboratedTypeSpecifier;
@@ -846,14 +847,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTCompoundStatement compoundStatement = new CPPASTCompoundStatement();
 		ICPPASTFunctionCallExpression memberToCallExpression = new CPPASTFunctionCallExpression();
 
-		/**
-		 * TODO:
-		 */
 		memberToCallExpression.setArguments(createParameterExpression(functionDefinition));
 		ICPPASTFieldReference fieldReference = new CPPASTFieldReference();
 		fieldReference.setIsPointerDereference(true);
-		IASTName methodName = ((ICPPASTFunctionDefinition) functionDefinition).getDeclarator().getName().getLastName()
-				.copy();
+		IASTName methodName = ((ICPPASTFunctionDefinition) functionDefinition).getDeclarator().getName().getLastName().copy();
 		fieldReference.setFieldName(methodName);
 		IASTIdExpression idExpression = new CPPASTIdExpression();
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
@@ -862,8 +859,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		memberToCallExpression.setFunctionNameExpression(fieldReference);
 
 		if ((((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier() == null)
-				|| (((ICPPASTSimpleDeclSpecifier) ((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier())
-						.getType() == ICPPASTSimpleDeclSpecifier.t_void)) {
+				|| (((ICPPASTSimpleDeclSpecifier) ((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier()).getType() == ICPPASTSimpleDeclSpecifier.t_void)) {
 			IASTExpressionStatement mappingStatement = new CPPASTExpressionStatement();
 			mappingStatement.setExpression(memberToCallExpression);
 			compoundStatement.addStatement(mappingStatement);
@@ -875,8 +871,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return compoundStatement;
 	}
 
-	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(
-			ICPPASTFunctionDefinition memberDefinition) {
+	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(ICPPASTFunctionDefinition memberDefinition) {
 		ICPPASTConstructorChainInitializer initializer = new CPPASTConstructorChainInitializer();
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
@@ -886,9 +881,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		if (parameters.length == 1) {
 			IASTIdExpression paramExpression = new CPPASTIdExpression();
 			paramExpression.setName(parameters[0].getDeclarator().getName().copy());
-			newExpression.setNewInitializer(paramExpression);
-//			IASTInitializer init = null;
-//			newExpression.setInitializer(init);
+			newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { paramExpression }));
 		} else if (parameters.length > 1) {
 			ICPPASTExpressionList parameterList = new CPPASTExpressionList();
 			for (IASTParameterDeclaration parameter : parameters) {
@@ -896,9 +889,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				parameterExpression.setName(parameter.getDeclarator().getName().copy());
 				parameterList.addExpression(parameterExpression);
 			}
-			newExpression.setNewInitializer(parameterList);
-//			IASTInitializerList init = null;
-//			newExpression.setInitializer(init);
+			newExpression.setInitializer(new CPPASTConstructorInitializer(parameterList.getExpressions()));
 		}
 
 		IASTTypeId typeId = new CPPASTTypeId();
@@ -906,16 +897,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		implTypeSpecifier.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
-		/**
-		 * TODO: remove old code
-		 */
-		initializer.setInitializerValue(newExpression);
-//		initializer.setInitializer(newExpression.getInitializer());
+		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
 		return initializer;
 	}
 
-	private ICPPASTConstructorChainInitializer createCopyConstructorPImplInitializer(
-			ICPPASTFunctionDefinition copyConstructorDefinition) {
+	private ICPPASTConstructorChainInitializer createCopyConstructorPImplInitializer(ICPPASTFunctionDefinition copyConstructorDefinition) {
 		ICPPASTConstructorChainInitializer initializer = new CPPASTConstructorChainInitializer();
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
@@ -929,18 +915,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		oldImplReference.setOperator(CPPASTUnaryExpression.op_star);
 		ICPPASTFieldReference oldImplPointerField = new CPPASTFieldReference();
 		IASTIdExpression oldImplExpression = new CPPASTIdExpression();
-		IASTName paramName = ((CPPASTFunctionDeclarator) copyConstructorDefinition.getDeclarator()).getParameters()[0]
-				.getDeclarator().getName().copy();
+		IASTName paramName = ((CPPASTFunctionDeclarator) copyConstructorDefinition.getDeclarator()).getParameters()[0].getDeclarator().getName().copy();
 		oldImplExpression.setName(paramName);
 		oldImplPointerField.setFieldOwner(oldImplExpression);
 		oldImplPointerField.setFieldName(pointerName.copy());
 		oldImplReference.setOperand(oldImplPointerField);
-		newExpression.setNewInitializer(oldImplReference);
-		/**
-		 * TODO: remove old code
-		 */
-		initializer.setInitializerValue(newExpression);
-//		initializer.setInitializer(newExpression.getInitializer());
+		newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { oldImplReference }));
+		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
 		return initializer;
 	}
 

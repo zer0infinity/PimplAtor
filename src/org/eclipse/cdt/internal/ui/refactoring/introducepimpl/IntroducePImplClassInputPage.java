@@ -1,7 +1,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -10,19 +9,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-@SuppressWarnings("restriction")
 public class IntroducePImplClassInputPage extends IntroducePImplBaseInputPage {
 
-	private CRefactoringContext context;
-
-	public IntroducePImplClassInputPage(String name, IntroducePImplInformation info, CRefactoringContext context) {
+	public IntroducePImplClassInputPage(String name, IntroducePImplInformation info) {
 		super(name, info);
-		this.context = context;
-	}
-	
-	@Override
-	public void dispose() {
-		context.dispose();
 	}
 
 	public void createControl(Composite parent) {
