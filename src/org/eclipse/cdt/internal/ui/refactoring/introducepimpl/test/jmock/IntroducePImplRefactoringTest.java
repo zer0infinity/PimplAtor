@@ -41,18 +41,12 @@ public class IntroducePImplRefactoringTest extends MockObjectTestCase {
 	
 	public void testCheckInitialCondition() {
 		RefactoringStatus status = refactoring.checkInitialConditions(PM);
-		assertFalse(status.isOK());
+		assertTrue(status.isOK());
 	}
 	
 	@SuppressWarnings("restriction")
 	public void testCheckFinalCondition() {
-		final ICPPASTCompositeTypeSpecifier classSpecifier = context.mock(ICPPASTCompositeTypeSpecifier.class);
-		context.checking(new Expectations() {{
-			allowing(classSpecifier).getName(); will(returnValue(IASTName.class));
-			allowing(classSpecifier).getParent().getParent(); will(returnValue(IASTNode.class));
-			allowing(classSpecifier).getDeclarations(with(any(Boolean.class)));
-		}});
-		info.setClassSpecifier(classSpecifier);
+		mockClassSpecifier();
 		RefactoringStatus status = null;
 		try {
 			status = refactoring.checkFinalConditions(PM);
@@ -62,15 +56,26 @@ public class IntroducePImplRefactoringTest extends MockObjectTestCase {
 			assertFalse(status.isOK());
 		}
 	}
+
+	private void mockClassSpecifier() {
+		final ICPPASTCompositeTypeSpecifier classSpecifier = context.mock(ICPPASTCompositeTypeSpecifier.class);
+		context.checking(new Expectations() {{
+			allowing(classSpecifier).getName(); will(returnValue(IASTName.class));
+			allowing(classSpecifier).getParent().getParent(); will(returnValue(IASTNode.class));
+			allowing(classSpecifier).getDeclarations(with(any(Boolean.class)));
+		}});
+		info.setClassSpecifier(classSpecifier);
+	}
 	
 	public void testCheckAllConditions() {
-		RefactoringStatus status = new RefactoringStatus();
+		mockClassSpecifier();
+		RefactoringStatus status = null;
 		try {
 			status = refactoring.checkAllConditions(PM);
-			assertFalse(status.isOK());
+			assertTrue(status.isOK());
 		} catch (OperationCanceledException | CoreException e) {
 			e.printStackTrace();
-			assertTrue(status.isOK());
+			assertFalse(status.isOK());
 		}
 	}
 }
