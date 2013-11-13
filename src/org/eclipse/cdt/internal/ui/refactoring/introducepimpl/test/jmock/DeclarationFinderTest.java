@@ -14,7 +14,7 @@ public class DeclarationFinderTest extends MockObjectTestCase {
 	
 	@Rule public JUnitRuleMockery context = new JUnitRuleMockery();
 
-	public void testDeclarationFinder() {
+	public void testFindDeclarationInTranslationUnit() {
 		final IASTTranslationUnit tu = context.mock(IASTTranslationUnit.class);
 		final IIndexName indexName = context.mock(IIndexName.class);
 		context.checking(new Expectations() {{
