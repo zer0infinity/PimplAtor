@@ -14,11 +14,11 @@ public class SelectionHelper {
 		return exprPos.getOffset()+exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
 	}
 	
-	protected static Region createExpressionPosition(IASTNode expression) {
+	private static Region createExpressionPosition(IASTNode expression) {
 		int start = 0;
 		int nodeLength = 0;
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
-		if (nodeLocations.length != 1) {
+		if (nodeLocations.length > 0) {
 			for (IASTNodeLocation location : nodeLocations) {
 				if (location instanceof IASTMacroExpansionLocation) {
 					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
@@ -27,15 +27,9 @@ public class SelectionHelper {
 				}
 			}
 		} else {
-			if (nodeLocations[0] instanceof IASTMacroExpansionLocation) {
-				IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) nodeLocations[0];
-				start = macroLoc.asFileLocation().getNodeOffset();
-				nodeLength = macroLoc.asFileLocation().getNodeLength();
-			} else {
-				IASTFileLocation loc = expression.getFileLocation();
-				start = loc.getNodeOffset();
-				nodeLength = loc.getNodeLength();
-			}
+			IASTFileLocation loc = expression.getFileLocation();
+			start = loc.getNodeOffset();
+			nodeLength = loc.getNodeLength();
 		}
 		return new Region(start, nodeLength);
 	}
