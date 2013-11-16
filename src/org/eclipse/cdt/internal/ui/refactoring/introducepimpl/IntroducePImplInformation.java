@@ -8,21 +8,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 public class IntroducePImplInformation {
 
 	public enum PointerType {
-		standard, shared, unique
+		STANDARD, SHARED, UNIQUE
 	}
 
 	public enum LibraryType {
-		boost, std
+		BOOST, STD
 	}
 
 	public enum CopyType {
-		deep, shallow, nocopy, noncopyable
+		DEEP, SHALLOW, NOCOPY, NONCOPYABLE
 	}
 
 	private int classType = ICPPASTCompositeTypeSpecifier.k_struct;
-	private PointerType pointerType = PointerType.unique;
-	private LibraryType libraryType = LibraryType.boost;
-	private CopyType copyType = CopyType.deep;
+	private PointerType pointerType = PointerType.UNIQUE;
+	private LibraryType libraryType = LibraryType.BOOST;
+	private CopyType copyType = CopyType.DEEP;
 
 	private String classNameImpl;
 	private String pointerNameImpl;

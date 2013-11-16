@@ -145,7 +145,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		standardRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setPointerType(IntroducePImplInformation.PointerType.standard);
+				info.setPointerType(IntroducePImplInformation.PointerType.STANDARD);
 				shallowRadioButton.setEnabled(false);
 				shallowRadioButton.setSelection(false);
 				if(!noCopyRadioButton.getSelection() && !nonCopyableRadioButton.getSelection())
@@ -163,7 +163,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		sharedButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setPointerType(IntroducePImplInformation.PointerType.shared);
+				info.setPointerType(IntroducePImplInformation.PointerType.SHARED);
 				shallowRadioButton.setEnabled(true);
 				boostRadioButton.setEnabled(true);
 				cpp11RadioButton.setEnabled(true);
@@ -179,7 +179,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		uniqueButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setPointerType(IntroducePImplInformation.PointerType.unique);
+				info.setPointerType(IntroducePImplInformation.PointerType.UNIQUE);
 				shallowRadioButton.setEnabled(true);
 				boostRadioButton.setEnabled(false);
 				cpp11RadioButton.setEnabled(false);
@@ -204,7 +204,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		boostRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setLibraryType(IntroducePImplInformation.LibraryType.boost);
+				info.setLibraryType(IntroducePImplInformation.LibraryType.BOOST);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -217,7 +217,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		cpp11RadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setLibraryType(IntroducePImplInformation.LibraryType.std);
+				info.setLibraryType(IntroducePImplInformation.LibraryType.STD);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -237,7 +237,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		deepRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.deep);
+				info.setCopyType(IntroducePImplInformation.CopyType.DEEP);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -250,7 +250,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		shallowRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.shallow);
+				info.setCopyType(IntroducePImplInformation.CopyType.SHALLOW);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -262,7 +262,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		noCopyRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.nocopy);
+				info.setCopyType(IntroducePImplInformation.CopyType.NOCOPY);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -274,7 +274,7 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 		nonCopyableRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.noncopyable);
+				info.setCopyType(IntroducePImplInformation.CopyType.NONCOPYABLE);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {

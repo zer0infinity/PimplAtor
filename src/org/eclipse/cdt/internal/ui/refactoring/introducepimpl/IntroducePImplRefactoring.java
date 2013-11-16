@@ -149,7 +149,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					return status;
 				}
 				sm.worked(3);
-				selectedNode = LoadHeaderUnit(selectedNode, status);
+				selectedNode = loadHeaderUnit(selectedNode, status);
 				if (status.hasError()) {
 					return status;
 				}
@@ -184,7 +184,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return container.getObject();
 	}
 	
-	private IASTNode LoadHeaderUnit(IASTNode selectedNode, RefactoringStatus status) throws CoreException {
+	private IASTNode loadHeaderUnit(IASTNode selectedNode, RefactoringStatus status) throws CoreException {
 		IASTName name = ((ICPPASTFunctionDefinition) selectedNode).getDeclarator().getName();
 		IBinding bind = name.resolveBinding();
 		IIndexName[] foundDecl = getIndex().findDeclarations(bind);
@@ -286,7 +286,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-					IASTTranslationUnit sourceUnit = CoreModelUtil.findTranslationUnit(cppFile).getAST();
+					ITranslationUnit tu = CoreModelUtil.findTranslationUnit(cppFile);
+					IASTTranslationUnit sourceUnit = getAST(tu, sm);
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
 				}
@@ -422,15 +423,15 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				insertBasicConstructor(headerClassNode, sourceClassNode);
 			}
 			sm.worked(workTick++);
-			if (info.getPointerType() == IntroducePImplInformation.PointerType.unique) {
+			if (info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
 				insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
 				insertDestructor(headerClassNode, sourceClassNode);
 			}
 			sm.worked(workTick++);
-			if (info.getCopyType() == IntroducePImplInformation.CopyType.deep) {
+			if (info.getCopyType() == IntroducePImplInformation.CopyType.DEEP) {
 				insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
 				insertCopyConstructor(headerClassNode, sourceClassNode);
-			} else if (info.getCopyType() == IntroducePImplInformation.CopyType.nocopy) {
+			} else if (info.getCopyType() == IntroducePImplInformation.CopyType.NOCOPY) {
 				insertHeaderVisibility(ICPPASTVisibilityLabel.v_private, headerClassNode);
 				insertCopyConstructor(headerClassNode, sourceClassNode);
 			}
@@ -478,8 +479,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				}
 
 				public int visit(ICPPASTNamespaceDefinition namespaceInHeader) {
-					ICPPASTNamespaceDefinition namespaceCopy = new CPPASTNamespaceDefinition(namespaceInHeader
-							.getName().copy());
+					ICPPASTNamespaceDefinition namespaceCopy = new CPPASTNamespaceDefinition(namespaceInHeader.getName().copy());
 					ASTRewrite rewrite = container.getRewrite().insertBefore(container.getNode(), null, namespaceCopy,
 							new TextEditGroup(Messages.IntroducePImpl_Rewrite_NamespaceInserted));
 					container.setNode(namespaceCopy);
@@ -489,8 +489,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			});
 		} else {
 			if (info.getClassSpecifier().getParent().getParent() instanceof ICPPASTNamespaceDefinition) {
-				ICPPASTNamespaceDefinition namespaceInHeader = (ICPPASTNamespaceDefinition) info.getClassSpecifier()
-						.getParent().getParent();
+				ICPPASTNamespaceDefinition namespaceInHeader = (ICPPASTNamespaceDefinition) info.getClassSpecifier().getParent().getParent();
 				final String namespaceNameInHeader = namespaceInHeader.getName().toString();
 				info.getSourceUnit().accept(new ASTVisitor() {
 					{
@@ -511,11 +510,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	}
 
 	private NodeContainer<ICPPASTCompositeTypeSpecifier> getHeaderClassContainer(ASTRewrite headerRewrite) {
-		IASTSimpleDeclaration classNode = NodeFactory.createClassDeclaration(info.getClassSpecifier().getName()
-				.toString(), info.getClassSpecifier().getKey());
+		IASTSimpleDeclaration classNode = NodeFactory.createClassDeclaration(info.getClassSpecifier().getName().toString(), info.getClassSpecifier().getKey());
 		((ICPPASTCompositeTypeSpecifier) classNode.getDeclSpecifier()).addDeclaration(NodeFactory
 				.createVisibilityLabel(ICPPASTVisibilityLabel.v_public));
-		if (info.getCopyType() == IntroducePImplInformation.CopyType.noncopyable) {
+		if (info.getCopyType() == IntroducePImplInformation.CopyType.NONCOPYABLE) {
 			((ICPPASTCompositeTypeSpecifier) classNode.getDeclSpecifier())
 					.addBaseSpecifier(createNoncopyableInitailizer());
 		}
@@ -525,8 +523,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				.getDeclSpecifier(), classNodeRewrite);
 	}
 
-	private NodeContainer<ICPPASTCompositeTypeSpecifier> getSourceImplClassContainer(
-			NodeContainer<IASTNode> sourceNodeContainer) {
+	private NodeContainer<ICPPASTCompositeTypeSpecifier> getSourceImplClassContainer(NodeContainer<IASTNode> sourceNodeContainer) {
 		IASTSimpleDeclaration implClassNode = NodeFactory.createClassDeclaration(info.getClassNameImpl(), info.getClassType());
 		ASTRewrite classRewrite;
 		classRewrite = sourceNodeContainer.insertBefore(null, implClassNode, new TextEditGroup(
@@ -686,10 +683,10 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	}
 
 	private void insertPointer(NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode) {
-		if (info.getPointerType() == IntroducePImplInformation.PointerType.standard) {
+		if (info.getPointerType() == IntroducePImplInformation.PointerType.STANDARD) {
 			headerClassNode.insertBefore(null, createSimplePointer(), new TextEditGroup(
 					Messages.IntroducePImpl_Rewrite_PointerInsertHeader));
-		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.shared) {
+		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
 			headerClassNode.insertBefore(null, createSharedPointer(), new TextEditGroup(
 					Messages.IntroducePImpl_Rewrite_PointerInsertHeader));
 		} else {
@@ -744,17 +741,17 @@ public class IntroducePImplRefactoring extends CRefactoring {
 
 	private void insertHeaderIncludes(ASTRewrite headerRewrite) {
 		boolean includesInsserted = false;
-		if (info.getPointerType() == IntroducePImplInformation.PointerType.shared) {
-			if (info.getLibraryType() == IntroducePImplInformation.LibraryType.boost) {
+		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
+			if (info.getLibraryType() == IntroducePImplInformation.LibraryType.BOOST) {
 				insertInclude(BOOST_SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			} else {
 				insertInclude(SHARED_AND_UNIQUE_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			}
 			includesInsserted = true;
-		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.unique) {
+		} else if (info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
 			insertInclude(SHARED_AND_UNIQUE_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 		}
-		if (info.getCopyType() == IntroducePImplInformation.CopyType.noncopyable) {
+		if (info.getCopyType() == IntroducePImplInformation.CopyType.NONCOPYABLE) {
 			insertInclude(BOOST_NONCOPYABLE_INCLUDE, headerRewrite, info.getHeaderUnit());
 			includesInsserted = true;
 		}
@@ -968,7 +965,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		sharedPtr.addTemplateArgument(genericType);
 
 		CPPASTQualifiedName qname = new CPPASTQualifiedName();
-		if (info.getLibraryType() == IntroducePImplInformation.LibraryType.boost) {
+		if (info.getLibraryType() == IntroducePImplInformation.LibraryType.BOOST) {
 			qname.addName(new CPPASTName(BOOST.toCharArray()));
 		} else {
 			qname.addName(new CPPASTName(STD.toCharArray()));
