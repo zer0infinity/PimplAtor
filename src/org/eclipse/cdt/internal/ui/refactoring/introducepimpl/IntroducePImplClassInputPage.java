@@ -24,34 +24,26 @@ public class IntroducePImplClassInputPage extends IntroducePImplBaseInputPage {
 		Label infoText = new Label(result, SWT.NONE);
 		infoText.setText(Messages.IntroducePImpl_ChooseClassInfo);
 
-		boolean firstClass = true;
 		for (ICPPASTCompositeTypeSpecifier classSpezifier : info.getClassSpecifiers()){
-			addClass(classSpezifier, result, firstClass);
+			addClass(classSpezifier, result, true);
 		}
 	}
 
-	private void addClass(ICPPASTCompositeTypeSpecifier classSpezifier, Composite result, boolean firstClass) {
+	private void addClass(ICPPASTCompositeTypeSpecifier classSpecifier, Composite result, boolean firstClass) {
 		if (firstClass) {
-			// Initialize ClassSpezifier in Info with first class
-			// occurrence
-			info.setClassSpecifier(classSpezifier);
-			firstClass = false;
+			info.setClassSpecifier(classSpecifier);
 		}
 		Button classRadioButton = new Button(result, SWT.RADIO);
-		classRadioButton.setText(classSpezifier.getName().toString());
-		classRadioButton.addSelectionListener(new SpecialSelectionListener(classRadioButton, info, classSpezifier));
+		classRadioButton.setText(classSpecifier.getName().toString());
+		classRadioButton.addSelectionListener(new SpecialSelectionListener(info, classSpecifier));
 	}
 
 	class SpecialSelectionListener implements SelectionListener {
 
-		Button control;
 		IntroducePImplInformation info;
 		ICPPASTCompositeTypeSpecifier classSpecifier;
 
-		public SpecialSelectionListener(Button control, IntroducePImplInformation info,
-				ICPPASTCompositeTypeSpecifier classSpecifier) {
-			super();
-			this.control = control;
+		public SpecialSelectionListener(IntroducePImplInformation info,	ICPPASTCompositeTypeSpecifier classSpecifier) {
 			this.info = info;
 			this.classSpecifier = classSpecifier;
 		}

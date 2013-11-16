@@ -20,7 +20,7 @@ public class IntroducePImplInformation {
 	}
 
 	private int classType = ICPPASTCompositeTypeSpecifier.k_struct;
-	private PointerType pointerType = PointerType.standard;
+	private PointerType pointerType = PointerType.unique;
 	private LibraryType libraryType = LibraryType.boost;
 	private CopyType copyType = CopyType.deep;
 

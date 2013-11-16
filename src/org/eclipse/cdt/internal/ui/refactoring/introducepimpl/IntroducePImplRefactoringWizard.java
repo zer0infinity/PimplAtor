@@ -16,16 +16,13 @@ public class IntroducePImplRefactoringWizard extends RefactoringWizard {
 	}
 
 	protected void addUserInputPages() {
+		IntroducePImplBaseInputPage classPage = new IntroducePImplDetailsInputPage(Messages.IntroducePImpl_IntroducePImpl, info);
+		classPage.setMessage(Messages.IntroducePImpl_ChooseDetailMsg);
 		if(info.getClassSpecifiers().size() > 1 && info.getClassSpecifier() == null){
-			IntroducePImplClassInputPage chooseClassPage = new IntroducePImplClassInputPage(Messages.IntroducePImpl_IntroducePImpl, this.info);
-			chooseClassPage.setTitle(Messages.IntroducePImpl_IntroducePImpl);
-			chooseClassPage.setMessage(Messages.IntroducePImpl_ChooseClassMsg);
-			addPage(chooseClassPage);
+			classPage = new IntroducePImplClassInputPage(Messages.IntroducePImpl_IntroducePImpl, info);
+			classPage.setMessage(Messages.IntroducePImpl_ChooseClassMsg);
 		}
-				
-		IntroducePImplDetailsInputPage chooseDetailsPage = new IntroducePImplDetailsInputPage(Messages.IntroducePImpl_IntroducePImpl, this.info);
-		chooseDetailsPage.setTitle(Messages.IntroducePImpl_IntroducePImpl);
-		chooseDetailsPage.setMessage(Messages.IntroducePImpl_ChooseDetailMsg);
-		addPage(chooseDetailsPage);
+		classPage.setTitle(Messages.IntroducePImpl_IntroducePImpl);
+		addPage(classPage);
 	}
 }

@@ -286,7 +286,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 						cppFile.create(dummyStream, true, pm);
 					}
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(1, pm);
-//					IASTTranslationUnit sourceUnit = info.getSourceUnit();
 					IASTTranslationUnit sourceUnit = CoreModelUtil.findTranslationUnit(cppFile).getAST();
 					sourceUnit.setIsHeaderUnit(false);
 					info.setSourceUnit(sourceUnit);
@@ -423,7 +422,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				insertBasicConstructor(headerClassNode, sourceClassNode);
 			}
 			sm.worked(workTick++);
-			if (info.getPointerType() == IntroducePImplInformation.PointerType.standard) {
+			if (info.getPointerType() == IntroducePImplInformation.PointerType.unique) {
 				insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
 				insertDestructor(headerClassNode, sourceClassNode);
 			}
@@ -528,8 +527,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 
 	private NodeContainer<ICPPASTCompositeTypeSpecifier> getSourceImplClassContainer(
 			NodeContainer<IASTNode> sourceNodeContainer) {
-		IASTSimpleDeclaration implClassNode = NodeFactory.createClassDeclaration(info.getClassNameImpl(), info
-				.getClassType());
+		IASTSimpleDeclaration implClassNode = NodeFactory.createClassDeclaration(info.getClassNameImpl(), info.getClassType());
 		ASTRewrite classRewrite;
 		classRewrite = sourceNodeContainer.insertBefore(null, implClassNode, new TextEditGroup(
 				Messages.IntroducePImpl_Rewrite_ImplClassInsertSource));
