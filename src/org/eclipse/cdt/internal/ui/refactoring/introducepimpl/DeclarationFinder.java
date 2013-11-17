@@ -31,7 +31,6 @@ public class DeclarationFinder {
 				}
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
-
 		});
 		return defName.getObject();
 	}

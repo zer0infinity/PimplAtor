@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage {
+public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 
 	private Text classNameText;
 	private Text pointerNameText;
@@ -41,9 +41,12 @@ public class IntroducePImplDetailsInputPage extends IntroducePImplBaseInputPage 
 	private Pattern classnameDiscouraged = Pattern.compile("[A-Z].*");
 	private Pattern pointernameDiscouraged = Pattern.compile("(_|[a-z]).*");
 	private Pattern nameError = Pattern.compile("(_|[A-Z]|[a-z]|[0-9])*", Pattern.UNICODE_CASE);
+	
+	private IntroducePImplInformation info;
 
 	public IntroducePImplDetailsInputPage(String name, IntroducePImplInformation info) {
-		super(name, info);
+		super(name);
+		this.info = info;
 	}
 	
 	public void createControl(Composite parent) {

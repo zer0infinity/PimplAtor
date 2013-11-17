@@ -11,11 +11,12 @@ public class SelectionHelper {
 		int nodeLength = 0;
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
 		if(0 < nodeLocations.length) {
-			for(int i = nodeLocations.length; nodeLocations.length <= i; i--) {
+			for(int i = nodeLocations.length; nodeLocations.length < i; i--) {
 				if (nodeLocations[i] instanceof IASTMacroExpansionLocation) {
 					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) nodeLocations[i];
 					start = macroLoc.asFileLocation().getNodeOffset();
 					nodeLength = macroLoc.asFileLocation().getNodeLength();
+					break;
 				}
 			}
 		} else {
