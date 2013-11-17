@@ -1,6 +1,5 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -8,29 +7,24 @@ import org.eclipse.jface.text.Region;
 
 public class SelectionHelper {
 	public static boolean isSelectionOnExpression(Region textSelection, IASTNode expression) {
-		Region exprPos = createExpressionPosition(expression);
-		int selStart = textSelection.getOffset();
-		int selEnd = textSelection.getLength() + selStart;
-		return exprPos.getOffset()+exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
-	}
-	
-	private static Region createExpressionPosition(IASTNode expression) {
 		int start = 0;
 		int nodeLength = 0;
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
-		if (nodeLocations.length > 0) {
-			for (IASTNodeLocation location : nodeLocations) {
-				if (location instanceof IASTMacroExpansionLocation) {
-					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
+		if(0 < nodeLocations.length) {
+			for(int i = nodeLocations.length; nodeLocations.length <= i; i--) {
+				if (nodeLocations[i] instanceof IASTMacroExpansionLocation) {
+					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) nodeLocations[i];
 					start = macroLoc.asFileLocation().getNodeOffset();
 					nodeLength = macroLoc.asFileLocation().getNodeLength();
 				}
 			}
 		} else {
-			IASTFileLocation loc = expression.getFileLocation();
-			start = loc.getNodeOffset();
-			nodeLength = loc.getNodeLength();
+			start = expression.getFileLocation().getNodeOffset();
+			nodeLength = expression.getFileLocation().getNodeLength();
 		}
-		return new Region(start, nodeLength);
+		Region exprPos = new Region(start, nodeLength);
+		int selStart = textSelection.getOffset();
+		int selEnd = textSelection.getLength() + selStart;
+		return exprPos.getOffset()+exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
 	}
 }
