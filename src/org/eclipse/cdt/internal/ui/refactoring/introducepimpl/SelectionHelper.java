@@ -12,7 +12,7 @@ public class SelectionHelper {
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
 		Region exprPos = new Region(start, nodeLength);
 		if (nodeLocations.length != 1) {
-			for(int i = nodeLocations.length; nodeLocations.length <= i; i--) {
+			for (int i = nodeLocations.length; nodeLocations.length <= i; i--) {
 				if (nodeLocations[i] instanceof IASTMacroExpansionLocation) {
 					exprPos = getRegion(nodeLocations[i]);
 					break;
@@ -27,9 +27,10 @@ public class SelectionHelper {
 		}
 		int selStart = textSelection.getOffset();
 		int selEnd = textSelection.getLength() + selStart;
-		return exprPos.getOffset()+exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
+		return exprPos.getOffset() + exprPos.getLength() >= selStart
+				&& exprPos.getOffset() <= selEnd;
 	}
-	
+
 	private static Region getRegion(IASTNodeLocation nodeLocations) {
 		int start = nodeLocations.asFileLocation().getNodeOffset();
 		int nodeLength = nodeLocations.asFileLocation().getNodeLength();

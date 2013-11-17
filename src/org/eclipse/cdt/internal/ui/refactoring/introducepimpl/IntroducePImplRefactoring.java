@@ -106,6 +106,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private static final String BOOST_NONCOPYABLE_INCLUDE = "<boost/noncopyable.hpp>";
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	private static final String COPY_PARAM_NAME = "toCopy";
+	private static final String MAKE_SHARED = "make_shared";
 	private boolean fileCreated = false;
 	private int actualOriginalVisibility = ICPPASTVisibilityLabel.v_public;
 	private int actualHeaderVisibility = ICPPASTVisibilityLabel.v_public;
@@ -423,7 +424,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				insertBasicConstructor(headerClassNode, sourceClassNode);
 			}
 			sm.worked(workTick++);
-			if (info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
+			if (info.getPointerType() == IntroducePImplInformation.PointerType.STANDARD
+					|| info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
 				insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
 				insertDestructor(headerClassNode, sourceClassNode);
 			}
@@ -441,7 +443,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			insertPointer(headerClassNode);
 			sm.worked(workTick++);
 			insertPrivateStatic(headerClassNode);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -702,7 +703,6 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				Messages.IntroducePImpl_Rewrite_BasicConstructorInsertSource));
 		headerClassNode.insertBefore(null, NodeFactory.createDeclarationFromDefinition(basicConstructor),
 				new TextEditGroup(Messages.IntroducePImpl_Rewrite_BasicConstructorInsertHeader));
-
 	}
 
 	private void insertDestructor(NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode,
@@ -808,8 +808,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	}
 
 	private ICPPASTFunctionDefinition createDestructorDefinition() {
-		ICPPASTFunctionDefinition definition = NodeFactory.createDestructorDefinition(info.getClassSpecifier()
-				.getName().toString(), true);
+		ICPPASTFunctionDefinition definition = NodeFactory.createDestructorDefinition(info.getClassSpecifier().getName().toString(), true);
+		if (info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
+			definition.setBody(new CPPASTCompoundStatement());
+			return definition;
+		}
 		IASTCompoundStatement deleteStatement = createPointerDelete();
 		definition.setBody(deleteStatement);
 		return definition;
@@ -865,11 +868,52 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 		return compoundStatement;
 	}
+	
+	/**
+	 * TODO: std::make_shared
+	 * @return
+	 */
+	private IASTSimpleDeclaration make_shared() {
+		// std::unique_ptr<struct ExampleImpl> _impl;
+		// std::make_shared<ExampleImpl>()
+		// struct ExampleImpl
+		ICPPASTElaboratedTypeSpecifier declSpec = new CPPASTElaboratedTypeSpecifier();
+		declSpec.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
+		declSpec.setKind(info.getClassType());
+
+		CPPASTTypeId genericType = new CPPASTTypeId();
+		genericType.setDeclSpecifier((IASTDeclSpecifier) declSpec);
+
+		// make_shared
+		CPPASTTemplateId make_shared = new CPPASTTemplateId(new CPPASTName(MAKE_SHARED.toCharArray()));
+		make_shared.addTemplateArgument(genericType);
+
+		// std
+		CPPASTQualifiedName qname = new CPPASTQualifiedName();
+		qname.addName(new CPPASTName(STD.toCharArray()));
+		qname.addName(make_shared);
+
+		CPPASTNamedTypeSpecifier typeSpec = new CPPASTNamedTypeSpecifier(qname);
+
+		IASTDeclarator pointerDeclarator = new CPPASTDeclarator();
+		pointerDeclarator.setName(new CPPASTName(info.getPointerNameImpl().toCharArray()));
+
+		IASTSimpleDeclaration declaration = new CPPASTSimpleDeclaration();
+		declaration.setDeclSpecifier(typeSpec);
+		declaration.addDeclarator(pointerDeclarator);
+		return declaration;
+	}
 
 	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(ICPPASTFunctionDefinition memberDefinition) {
 		ICPPASTConstructorChainInitializer initializer = new CPPASTConstructorChainInitializer();
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
+//		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
+//			/**
+//			 * TODO: std::make_shared<Impl>() {}
+//			 */
+//			return initializer;
+//		}
 		ICPPASTNewExpression newExpression = new CPPASTNewExpression();
 
 		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) memberDefinition.getDeclarator()).getParameters();
