@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -70,7 +71,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNewExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
@@ -870,52 +870,21 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return compoundStatement;
 	}
 	
-	/**
-	 * TODO: std::make_shared<Impl>() {}
-	 */
-	private IASTSimpleDeclaration insertMakeSharedDeclaration() {
-		// std::unique_ptr<struct ExampleImpl> _impl;
-		// std::make_shared<ExampleImpl>()
-		
-		// ExampleImpl
-		ICPPASTElaboratedTypeSpecifier declSpec = new CPPASTElaboratedTypeSpecifier();
+	private CPPASTQualifiedName insertMakeSharedDefinition() {
+		ICPPASTNamedTypeSpecifier declSpec = new CPPASTNamedTypeSpecifier();
 		declSpec.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
-
-		// <T>
-		// <ExmapleImpl>
 		CPPASTTypeId genericType = new CPPASTTypeId();
 		genericType.setDeclSpecifier((IASTDeclSpecifier) declSpec);
-
-		// make_shared
-		// make_shared<ExampleImpl>
 		CPPASTTemplateId make_shared = new CPPASTTemplateId(new CPPASTName(MAKE_SHARED.toCharArray()));
 		make_shared.addTemplateArgument(genericType);
-
-		// std
-		// std::make_shared<ExampleImpl>
 		CPPASTQualifiedName qname = new CPPASTQualifiedName();
-		qname.addName(new CPPASTName(STD.toCharArray()));
+		if (info.getLibraryType() == IntroducePImplInformation.LibraryType.BOOST) {
+			qname.addName(new CPPASTName(BOOST.toCharArray()));
+		} else {
+			qname.addName(new CPPASTName(STD.toCharArray()));
+		}
 		qname.addName(make_shared);
-
-//		IASTDeclarator pointerDeclarator = new CPPASTFunctionDeclarator();
-//		pointerDeclarator.setName(new CPPASTName(info.getPointerNameImpl().toCharArray()));
-//		IASTSimpleDeclaration declaration = new CPPASTSimpleDeclaration();
-//		declaration.setDeclSpecifier(new CPPASTNamedTypeSpecifier(qname));
-//		declaration.addDeclarator(pointerDeclarator);
-		
-		// ()
-		// std::make_shared<ExampleImpl>()
-		CPPASTFunctionDefinition definition = new CPPASTFunctionDefinition();
-		definition.setDeclSpecifier(new CPPASTNamedTypeSpecifier(qname));
-		definition.setBody(new CPPASTCompoundStatement());
-		// imho return definition
-//		return definition;
-
-		// definition to declaration
-		// ????
-		IASTSimpleDeclaration declaration = NodeFactory.createDeclarationFromDefinition(definition);
-		declaration.setDeclSpecifier(new CPPASTSimpleDeclSpecifier());
-		return declaration;
+		return qname;
 	}
 
 	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(ICPPASTFunctionDefinition memberDefinition) {
@@ -923,11 +892,11 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
-			/**
-			 * TODO: std::make_shared<Impl>() {}
-			 */
-			IASTExpression[] expression = createParameterExpression(insertMakeSharedDeclaration());
-			initializer.setInitializer(new CPPASTConstructorInitializer(expression));
+			IASTIdExpression expression = new CPPASTIdExpression();
+			expression.setName(insertMakeSharedDefinition());
+			ICPPASTFunctionCallExpression function = new CPPASTFunctionCallExpression();
+			function.setFunctionNameExpression(expression);
+			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { function }));
 			return initializer;
 		}
 		ICPPASTNewExpression newExpression = new CPPASTNewExpression();
@@ -960,12 +929,33 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		ICPPASTConstructorChainInitializer initializer = new CPPASTConstructorChainInitializer();
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
+		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
+			IASTIdExpression expression = new CPPASTIdExpression();
+			expression.setName(insertMakeSharedDefinition());
+			ICPPASTFunctionCallExpression function = new CPPASTFunctionCallExpression();
+			function.setFunctionNameExpression(expression);
+			
+			ICPPASTUnaryExpression oldImplReference = getImplReference(copyConstructorDefinition, pointerName);
+			
+			function.setArguments(new IASTInitializerClause[] { oldImplReference });
+			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { function }));
+			return initializer;
+		}
 		ICPPASTNewExpression newExpression = new CPPASTNewExpression();
 		IASTTypeId typeId = new CPPASTTypeId();
 		ICPPASTNamedTypeSpecifier implTypeSpecifier = new CPPASTNamedTypeSpecifier();
 		implTypeSpecifier.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
+		
+		ICPPASTUnaryExpression oldImplReference = getImplReference(copyConstructorDefinition, pointerName);
+		
+		newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { oldImplReference }));
+		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
+		return initializer;
+	}
+
+	private ICPPASTUnaryExpression getImplReference(ICPPASTFunctionDefinition copyConstructorDefinition, IASTName pointerName) {
 		ICPPASTUnaryExpression oldImplReference = new CPPASTUnaryExpression();
 		oldImplReference.setOperator(CPPASTUnaryExpression.op_star);
 		ICPPASTFieldReference oldImplPointerField = new CPPASTFieldReference();
@@ -975,9 +965,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		oldImplPointerField.setFieldOwner(oldImplExpression);
 		oldImplPointerField.setFieldName(pointerName.copy());
 		oldImplReference.setOperand(oldImplPointerField);
-		newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { oldImplReference }));
-		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
-		return initializer;
+		return oldImplReference;
 	}
 
 	private IASTExpression[] createParameterExpression(IASTDeclaration member) {
