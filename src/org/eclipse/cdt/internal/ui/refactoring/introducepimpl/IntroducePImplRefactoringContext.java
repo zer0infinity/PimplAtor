@@ -116,8 +116,9 @@ public class IntroducePImplRefactoringContext {
 	void handleFunctionDefinition(ICPPASTFunctionDefinition functionDefinition,
 			NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode, NodeContainer<IASTNode> sourceClassNode,
 			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
-		if (NodeHelper.isConstructor(functionDefinition)) {
-			info.isConstructorInserted = true;
+		boolean isContructor = NodeHelper.isConstructor(functionDefinition);
+		if (isContructor) {
+			info.isConstructorInserted = isContructor;
 			handleConstructor(functionDefinition, headerClassNode, sourceClassNode, implClassNode);
 		} else if (NodeHelper.isDestructor(functionDefinition)) {
 			handleImplDestructor(functionDefinition, implClassNode);
