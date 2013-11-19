@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock" default="build.jars" basedir=".">
+<project name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test" default="build.jars" basedir=".">
 
 	<property name="p2.build.repo" value="file:${buildDirectory}/buildRepo"/>
 	<property name="basews" value="${ws}"/>
 	<property name="baseos" value="${os}"/>
 	<property name="basearch" value="${arch}"/>
 	<property name="basenl" value="${nl}"/>
-	<property name="bundleId" value="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock"/>
+	<property name="bundleId" value="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test"/>
 	<property name="bundleVersion" value="1.0.0"/>
 	<property name="p2.publishonerror" value="false"/>
 
@@ -50,7 +50,7 @@
 			<isset property="buildTempFolder"/>
 		</condition>
 		<property name="pluginTemp" value="${basedir}"/>
-		<condition property="build.result.folder" value="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"		>
+		<condition property="build.result.folder" value="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"		>
 			<isset property="buildTempFolder"/>
 		</condition>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -73,14 +73,14 @@
 
 	</target>
 
-	<target name="build.update.jar" depends="init" description="Build the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock for an update site.">
+	<target name="build.update.jar" depends="init" description="Build the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test for an update site.">
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
 		<antcall target="gather.bin.parts">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
-		<jar destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0.jar" basedir="${temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" filesetmanifest="merge"/>
+		<jar destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.jar" basedir="${temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" filesetmanifest="merge"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
@@ -114,14 +114,14 @@
 			<patternset includes="e4-ide.jar"/>
 		</unzip>
 	</target>
-	<target name="@dot" depends="init,@dot.nestedJars" unless="@dot" description="Create jar: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock @dot.">
+	<target name="@dot" depends="init,@dot.nestedJars" unless="@dot" description="Create jar: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test @dot.">
 		<delete dir="${build.result.folder}/@dot"/>
 		<mkdir dir="${build.result.folder}/@dot"/>
 		<path id="@dot.classpath">
 			<pathelement path="../../../eclipse_sa/plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/bin/"/>
-			<pathelement path="../../../Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/@dot"/>
+			<pathelement path="../org.eclipse.cdt.internal.ui.refactoring.introducepimpl/target/classes"/>
+			<pathelement path="../org.eclipse.cdt.internal.ui.refactoring.introducepimpl/@dot"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.ui_5.6.1.201309180223.jar"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core_5.5.0.201309180223.jar"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core.win32_5.3.0.201309180223.jar"/>
@@ -227,22 +227,25 @@
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.console_3.5.200.v20130514-0954.jar"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.navigator.resources_3.4.500.v20130516-1049.jar"/>
 			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.views.properties.tabbed_3.6.0.v20130515-1857.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/bsh-core-2.0b4.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/cglib-nodep-2.2.3.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-core-1.3.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-core-1.3-javadoc.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-core-1.3-sources.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-library-1.3.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-library-1.3-javadoc.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-library-1.3-sources.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-unit-test-1.3.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/hamcrest-unit-test-1.3-sources.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/jmock-2.6.0.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/jmock-junit3-2.6.0.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/jmock-junit4-2.6.0.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/jmock-legacy-2.6.0.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/jmock-script-2.6.0.jar"/>
-			<pathelement path="../../../Java/workspace_sa/org.jmock/objenesis-1.0.jar"/>
+			<pathelement path="../org.jmock/bsh-core-2.0b4.jar"/>
+			<pathelement path="../org.jmock/cglib-nodep-2.2.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3-javadoc.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3-javadoc.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/hamcrest-unit-test-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-unit-test-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/jmock-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-junit3-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-junit4-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-legacy-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-script-2.6.0.jar"/>
+			<pathelement path="../org.jmock/objenesis-1.0.jar"/>
+			<pathelement path="../ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/bin/"/>
+			<pathelement path="../ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/@dot"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core.tests_5.4.1.201306191513.jar"/>
 		</path>
 		<!-- compile the source code -->
 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}"		>
@@ -281,19 +284,21 @@
 		</copy>
 	</target>
 
-	<target name="build.jars" depends="init" description="Compile classes and build nested jars for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock.">
+	<target name="build.jars" depends="init" description="Compile classes and build nested jars for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.">
 		<delete file="${compilation.problem.marker}" quiet="true"/>
 		<available property="@dot" file="${build.result.folder}/@dot"/>
 		<antcall target="@dot"/>
 	</target>
 
 	<target name="checkCompilationResults" if="compilation.error.occured">
-		<echo file="${compilation.problem.marker}" message="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
-		<eclipse.logCompileError bundle="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" log="${compilation.prereq.log}">
+		<echo file="${compilation.problem.marker}" message="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
+		<eclipse.logCompileError bundle="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" log="${compilation.prereq.log}">
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/compilation.problem"/>
+			<include name="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl_1.0.0/compilation.problem"/>
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/compilation.problem"/>
+			<include name="${pluginTemp}/ch.hsr.ifs.cdttesting_3.0.0.201311191901/compilation.problem"/>
 			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.jmock/compilation.problem"/>
 			<include name="${pluginTemp}/org.jmock_2.6.0/compilation.problem"/>
-			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/compilation.problem"/>
-			<include name="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl_1.0.0.201311051357/compilation.problem"/>
 		</eclipse.logCompileError>
 	</target>
 
@@ -303,7 +308,7 @@
 	</target>
 
 	<target name="publish.bin.parts" depends="init" if="p2.publish.parts" unless="compilation.problem.marker.exists">
-		<mkdir dir="${build.result.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
+		<mkdir dir="${build.result.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
 		<copy todir="${build.result.folder}" failonerror="true" overwrite="true">
 			<fileset dir="${basedir}">
 				<include name="META-INF/MANIFEST.MF"/>
@@ -326,21 +331,27 @@
 	</target>
 
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
-		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" failonerror="true" overwrite="false">
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="true" overwrite="false">
 			<fileset dir="${build.result.folder}/@dot">
 				<include name="**"/>
 			</fileset>
 		</copy>
-		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" failonerror="true" overwrite="true">
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="true" overwrite="true">
 			<fileset dir="${basedir}">
 				<include name="META-INF/"/>
 				<include name="src/"/>
 				<include name="bin/"/>
+				<include name="resources/"/>
+				<include name="javaCompiler...args"/>
+				<include name="epl-v10.html"/>
+				<include name="build.properties"/>
+				<include name="build.xml"/>
+				<include name=".settings/"/>
 			</fileset>
 		</copy>
 		<antcall target="apitools.generation">
-			<param name="target.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
+			<param name="target.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
 			<param name="projectLocation" value="${basedir}"/>
 			<param name="binary.folders" value="${build.result.folder}/@dot"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
@@ -351,10 +362,10 @@
 	</target>
 
 	<target name="gather.sources" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
-		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" failonerror="false" overwrite="false"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="false" overwrite="false"/>
 		<antcall target="copy.src.includes">
-			<param name="source.destination.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
+			<param name="source.destination.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
 		</antcall>
 	</target>
 
@@ -370,38 +381,37 @@
 	<target name="copy.src.includes" depends="init">
 		<copy todir="${source.destination.folder}" failonerror="false" overwrite="false">
 			<fileset dir="${basedir}">
-				<include name="src/"/>
-				<include name="META-INF/"/>
-				<include name="build.properties"/>
 				<include name="build.xml"/>
+				<include name="epl-v10.html"/>
+				<include name="resources/"/>
 			</fileset>
 		</copy>
 	</target>
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0"/>
-		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0" failonerror="false" overwrite="false">
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="false" overwrite="false">
 			<fileset dir="${build.result.folder}">
 				<include name="@dot${logExtension}"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="clean" depends="init" description="Clean the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock of all the zips, jars and logs created.">
+	<target name="clean" depends="init" description="Clean the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test of all the zips, jars and logs created.">
 		<delete dir="${build.result.folder}/@dot"/>
 		<delete file="${build.result.folder}/src.zip"/>
-		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0.jar"/>
-		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0.zip"/>
+		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.jar"/>
+		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.zip"/>
 		<delete dir="${temp.folder}"/>
 		<delete file="${compilation.problem.marker}" quiet="true"/>
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="D:/MyFiles/Coding/Git/PimplAtorTest/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 
-	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock.">
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.">
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
@@ -417,7 +427,7 @@
 				<include name="**/*.bin${logExtension}"/>
 			</fileset>
 		</delete>
-		<zip destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.jmock_1.0.0.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<zip destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
