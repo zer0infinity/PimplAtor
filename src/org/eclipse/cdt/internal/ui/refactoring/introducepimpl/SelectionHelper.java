@@ -12,7 +12,7 @@ public class SelectionHelper {
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
 		Region exprPos = new Region(start, nodeLength);
 		if (nodeLocations.length != 1) {
-			for (int i = nodeLocations.length; nodeLocations.length <= i; i--) {
+			for (int i = nodeLocations.length-1; 0 <= i; i--) {
 				if (nodeLocations[i] instanceof IASTMacroExpansionLocation) {
 					exprPos = getRegion(nodeLocations[i]);
 					break;
