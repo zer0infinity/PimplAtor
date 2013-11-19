@@ -870,7 +870,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		return compoundStatement;
 	}
 	
-	private CPPASTQualifiedName insertMakeSharedDefinition() {
+	private ICPPASTFunctionCallExpression insertMakeSharedDefinition() {
 		ICPPASTNamedTypeSpecifier declSpec = new CPPASTNamedTypeSpecifier();
 		declSpec.setName(new CPPASTName(info.getClassNameImpl().toCharArray()));
 		CPPASTTypeId genericType = new CPPASTTypeId();
@@ -884,7 +884,12 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			qname.addName(new CPPASTName(STD.toCharArray()));
 		}
 		qname.addName(make_shared);
-		return qname;
+		
+		IASTIdExpression expression = new CPPASTIdExpression();
+		expression.setName(qname);
+		ICPPASTFunctionCallExpression function = new CPPASTFunctionCallExpression();
+		function.setFunctionNameExpression(expression);
+		return function;
 	}
 
 	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(ICPPASTFunctionDefinition memberDefinition) {
@@ -892,11 +897,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
-			IASTIdExpression expression = new CPPASTIdExpression();
-			expression.setName(insertMakeSharedDefinition());
-			ICPPASTFunctionCallExpression function = new CPPASTFunctionCallExpression();
-			function.setFunctionNameExpression(expression);
-			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { function }));
+			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { insertMakeSharedDefinition() }));
 			return initializer;
 		}
 		ICPPASTNewExpression newExpression = new CPPASTNewExpression();
@@ -930,13 +931,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
-			IASTIdExpression expression = new CPPASTIdExpression();
-			expression.setName(insertMakeSharedDefinition());
-			ICPPASTFunctionCallExpression function = new CPPASTFunctionCallExpression();
-			function.setFunctionNameExpression(expression);
-			
-			ICPPASTUnaryExpression oldImplReference = getImplReference(copyConstructorDefinition, pointerName);
-			
+			ICPPASTUnaryExpression oldImplReference = getOldImplReference(copyConstructorDefinition, pointerName);
+			ICPPASTFunctionCallExpression function = insertMakeSharedDefinition();
 			function.setArguments(new IASTInitializerClause[] { oldImplReference });
 			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { function }));
 			return initializer;
@@ -948,14 +944,14 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
 		
-		ICPPASTUnaryExpression oldImplReference = getImplReference(copyConstructorDefinition, pointerName);
+		ICPPASTUnaryExpression oldImplReference = getOldImplReference(copyConstructorDefinition, pointerName);
 		
 		newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { oldImplReference }));
 		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
 		return initializer;
 	}
 
-	private ICPPASTUnaryExpression getImplReference(ICPPASTFunctionDefinition copyConstructorDefinition, IASTName pointerName) {
+	private ICPPASTUnaryExpression getOldImplReference(ICPPASTFunctionDefinition copyConstructorDefinition, IASTName pointerName) {
 		ICPPASTUnaryExpression oldImplReference = new CPPASTUnaryExpression();
 		oldImplReference.setOperator(CPPASTUnaryExpression.op_star);
 		ICPPASTFieldReference oldImplPointerField = new CPPASTFieldReference();
