@@ -17,5 +17,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.ui;bundle-version="5.6.1"
 Import-Package: org.eclipse.cdt.internal.ui.editor,org.eclipse.cdt.internal.ui.refactoring,org.eclipse.cdt.internal.ui.refactoring.dialogs,org.eclipse.cdt.internal.ui.refactoring.utils,org.eclipse.cdt.ui.refactoring.actions,org.eclipse.jface.text,org.eclipse.ltk.ui.refactoring,org.eclipse.text.edits,org.eclipse.ui.navigator.resources,org.eclipse.ui.views.contentoutline
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: HSR University of applied Sciences Rapperswil
+Bundle-Vendor: HSR University of applied sciences Rapperswil
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
