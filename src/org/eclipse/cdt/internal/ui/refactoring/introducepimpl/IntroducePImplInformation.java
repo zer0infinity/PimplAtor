@@ -2,8 +2,10 @@ package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 
 public class IntroducePImplInformation {
 
@@ -33,6 +35,14 @@ public class IntroducePImplInformation {
 
 	private IASTTranslationUnit headerUnit;
 	private IASTTranslationUnit sourceUnit;
+	
+	private int actualOriginalVisibility = ICPPASTVisibilityLabel.v_public;
+	private int actualHeaderVisibility = ICPPASTVisibilityLabel.v_public;
+	private int actualImplVisibility = 0;
+	
+	boolean isConstructorInserted, isNodeStatic, isFileCreated;
+	
+	private ArrayList<IASTSimpleDeclaration> privateStaticList;
 
 	public IASTTranslationUnit getSourceUnit() {
 		return sourceUnit;
@@ -112,5 +122,37 @@ public class IntroducePImplInformation {
 
 	public ArrayList<ICPPASTCompositeTypeSpecifier> getClassSpecifiers() {
 		return classSpecifiers;
+	}
+	
+	public ArrayList<IASTSimpleDeclaration> getPrivateStaticList() {
+		return privateStaticList;
+	}
+
+	public void setPrivateStaticList(ArrayList<IASTSimpleDeclaration> privateStaticList) {
+		this.privateStaticList = privateStaticList;
+	}
+
+	public int getActualOriginalVisibility() {
+		return actualOriginalVisibility;
+	}
+
+	public void setActualOriginalVisibility(int actualOriginalVisibility) {
+		this.actualOriginalVisibility = actualOriginalVisibility;
+	}
+
+	public int getActualImplVisibility() {
+		return actualImplVisibility;
+	}
+
+	public void setActualImplVisibility(int actualImplVisibility) {
+		this.actualImplVisibility = actualImplVisibility;
+	}
+	
+	public int getActualHeaderVisibility() {
+		return actualHeaderVisibility;
+	}
+
+	public void setActualHeaderVisibility(int actualHeaderVisibility) {
+		this.actualHeaderVisibility = actualHeaderVisibility;
 	}
 }
