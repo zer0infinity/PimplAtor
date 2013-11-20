@@ -72,7 +72,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
-		SubMonitor sm = SubMonitor.convert(pm, 4);
+		int workTickAvailable = 4;
+		SubMonitor sm = SubMonitor.convert(pm, workTickAvailable);
 		RefactoringStatus status = new RefactoringStatus();
 		try {
 			status = super.checkInitialConditions(sm.newChild(6));
@@ -116,7 +117,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					shouldVisitDeclarations = true;
 				}
 				public int visit(IASTDeclaration declaration) {
-					if (org.eclipse.cdt.internal.ui.refactoring.introducepimpl.SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
+					if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
 						container.setObject((IASTDeclaration) declaration);
 					}
 					return super.visit(declaration);
@@ -191,7 +192,8 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	
 	@Override
 	protected RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext) {
-		SubMonitor sm = SubMonitor.convert(pm, 10);
+		int workTickAvailable = 10;
+		SubMonitor sm = SubMonitor.convert(pm, workTickAvailable);
 		RefactoringStatus status = null;
 		try {
 			sm.worked(0);
