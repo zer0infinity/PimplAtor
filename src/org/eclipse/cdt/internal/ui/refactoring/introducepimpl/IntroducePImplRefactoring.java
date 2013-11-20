@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
@@ -60,13 +61,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	
 	private IntroducePImplInformation info;
-	private IntroducePImplRefactoringContext context;
+	private IntroducePImplContext context;
 
 	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
 		name = Messages.IntroducePImpl_IntroducePImpl;
-		context = new IntroducePImplRefactoringContext(this, info);
+		context = new IntroducePImplContext(info);
 	}
 	
 	@Override
@@ -276,7 +277,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 					publicLabel = true;
 				}
 			} else if (NodeHelper.isFunctionDeclarator(member)) {
-				ICPPASTFunctionDefinition definition = getDefinitionOfDeclaration(member);
+				ICPPASTFunctionDefinition definition = getDefinitionOfDeclaration(member, info, getIndex());
 				if (definition == null) {
 					declWithoutDefinition.add((IASTSimpleDeclaration) member);
 				}
@@ -286,15 +287,15 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 		return declWithoutDefinition;
 	}
-
-	ICPPASTFunctionDefinition getDefinitionOfDeclaration(IASTDeclaration member) throws CoreException {
+	
+	static ICPPASTFunctionDefinition getDefinitionOfDeclaration(IASTDeclaration member, IntroducePImplInformation info, IIndex index) throws CoreException {
 		IASTDeclarator[] declarators = ((IASTSimpleDeclaration) member).getDeclarators();
 		if (declarators.length == 0) {
 			return null;
 		}
 		IASTName name = declarators[0].getName();
 		IBinding bind = name.resolveBinding();
-		IIndexName[] iNames = getIndex().findDefinitions(bind);
+		IIndexName[] iNames = index.findDefinitions(bind);
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
@@ -311,7 +312,7 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		}
 		return null;
 	}
-	
+
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) {
 		final int TICK_COUNT_COLLECT_MODIFICATIONS = 9;
 		int tickCount = TICK_COUNT_COLLECT_MODIFICATIONS + info.getClassSpecifier().getDeclarations(true).length;
@@ -333,84 +334,76 @@ public class IntroducePImplRefactoring extends CRefactoring {
 			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode = getSourceImplClassContainer(sourceClassNode);
 
 			info.setPrivateStaticList(new ArrayList<IASTSimpleDeclaration>());
-			initVisibility(info.getClassSpecifier(), implClassNode);
+			context.initVisibility(info.getClassSpecifier(), implClassNode);
 
-			for (IASTNode node : info.getClassSpecifier().getDeclarations(true)) {
-				sm.worked(workTick++);
-				boolean isNodeStatic = NodeHelper.isStatic(node);
-				info.isNodeStatic = isNodeStatic;
-				if (node instanceof IASTSimpleDeclaration) {
-					IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) node;
-					if (!NodeHelper.isEmtypDeclarator(simpleDeclaration)) {
-						if (simpleDeclaration.getDeclarators()[0] instanceof IASTFunctionDeclarator) {
-							context.handleFunctionDeclarator(simpleDeclaration, headerClassNode, sourceClassNode, implClassNode);
-						} else if (simpleDeclaration.getDeclarators()[0] instanceof IASTDeclarator) {
-							if (isNodeStatic) {
-								context.handleStaticDeclarator(simpleDeclaration.copy(), headerClassNode);
-							} else {
-								context.handleDeclarator(simpleDeclaration.copy(), implClassNode);
-							}
-						}
-					}
-				} else if (node instanceof ICPPASTVisibilityLabel) {
-					ICPPASTVisibilityLabel visibilityLabel = (ICPPASTVisibilityLabel) node;
-					context.handleVisibilitiyLabel(visibilityLabel.copy(), implClassNode);
-				} else if (node instanceof ICPPASTFunctionDefinition) {
-					ICPPASTFunctionDefinition functionDefinition = (ICPPASTFunctionDefinition) node;
-					context.handleFunctionDefinition(functionDefinition.copy(), headerClassNode, sourceClassNode, implClassNode);
-				}
-			}
-			sm.worked(workTick++);
-			if (!info.isConstructorInserted) {
-				context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
-				context.insertBasicConstructor(headerClassNode, sourceClassNode);
-			}
-			sm.worked(workTick++);
-			if (info.getPointerType() == IntroducePImplInformation.PointerType.STANDARD
-					|| info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
-				context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
-				context.insertDestructor(headerClassNode, sourceClassNode);
-			}
-			sm.worked(workTick++);
-			if (info.getCopyType() == IntroducePImplInformation.CopyType.DEEP) {
-				context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
-				context.insertCopyConstructor(headerClassNode, sourceClassNode);
-			} else if (info.getCopyType() == IntroducePImplInformation.CopyType.NOCOPY) {
-				context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_private, headerClassNode);
-				context.insertCopyConstructor(headerClassNode, sourceClassNode);
-			}
-
-			context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_private, headerClassNode);
-			sm.worked(workTick++);
-			context.insertPointer(headerClassNode);
-			sm.worked(workTick++);
-			context.insertPrivateStatic(headerClassNode);
+			workTick = handleModifications(sm, workTick, sourceClassNode, headerClassNode, implClassNode);
+			insertModifications(sm, workTick, sourceClassNode, headerClassNode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void initVisibility(ICPPASTCompositeTypeSpecifier originalHeaderClass,
-			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
-		if (originalHeaderClass.getDeclarations(true).length > 0
-				&& !(originalHeaderClass.getDeclarations(true)[0] instanceof ICPPASTVisibilityLabel)) {
-			if (originalHeaderClass.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
-				info.setActualOriginalVisibility(ICPPASTVisibilityLabel.v_private);
-				initImplVisibility(ICPPASTVisibilityLabel.v_private, originalHeaderClass.getKey(), implClassNode);
-			} else {
-				info.setActualOriginalVisibility(ICPPASTVisibilityLabel.v_public);
-				initImplVisibility(ICPPASTVisibilityLabel.v_public, originalHeaderClass.getKey(), implClassNode);
+	private int handleModifications(SubMonitor sm, int workTick,
+			NodeContainer<IASTNode> sourceClassNode,
+			NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode,
+			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode)
+			throws CoreException {
+		for (IASTNode node : info.getClassSpecifier().getDeclarations(true)) {
+			sm.worked(workTick++);
+			boolean isNodeStatic = NodeHelper.isStatic(node);
+			info.isNodeStatic = isNodeStatic;
+			if (node instanceof IASTSimpleDeclaration) {
+				IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) node;
+				if (!NodeHelper.isEmtypDeclarator(simpleDeclaration)) {
+					if (simpleDeclaration.getDeclarators()[0] instanceof IASTFunctionDeclarator) {
+						context.handleFunctionDeclarator(simpleDeclaration, getIndex(), headerClassNode, sourceClassNode, implClassNode);
+					} else if (simpleDeclaration.getDeclarators()[0] instanceof IASTDeclarator) {
+						if (isNodeStatic) {
+							context.handleStaticDeclarator(simpleDeclaration.copy(), headerClassNode);
+						} else {
+							context.handleDeclarator(simpleDeclaration.copy(), implClassNode);
+						}
+					}
+				}
+			} else if (node instanceof ICPPASTVisibilityLabel) {
+				ICPPASTVisibilityLabel visibilityLabel = (ICPPASTVisibilityLabel) node;
+				context.handleVisibilitiyLabel(visibilityLabel.copy(), implClassNode);
+			} else if (node instanceof ICPPASTFunctionDefinition) {
+				ICPPASTFunctionDefinition functionDefinition = (ICPPASTFunctionDefinition) node;
+				context.handleFunctionDefinition(functionDefinition.copy(), headerClassNode, sourceClassNode, implClassNode);
 			}
 		}
+		return workTick;
 	}
 
-	private void initImplVisibility(int visibility, int originalHeaderType,
-			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
-		if (originalHeaderType == info.getClassType()) {
-			info.setActualImplVisibility(visibility);
-		} else {
-			context.insertImplVisibility(visibility, implClassNode);
+	private void insertModifications(SubMonitor sm, int workTick,
+			NodeContainer<IASTNode> sourceClassNode,
+			NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode) {
+		sm.worked(workTick++);
+		if (!info.isConstructorInserted) {
+			context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
+			context.insertBasicConstructor(headerClassNode, sourceClassNode);
 		}
+		sm.worked(workTick++);
+		if (info.getPointerType() == IntroducePImplInformation.PointerType.STANDARD
+				|| info.getPointerType() == IntroducePImplInformation.PointerType.UNIQUE) {
+			context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
+			context.insertDestructor(headerClassNode, sourceClassNode);
+		}
+		sm.worked(workTick++);
+		if (info.getCopyType() == IntroducePImplInformation.CopyType.DEEP) {
+			context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_public, headerClassNode);
+			context.insertCopyConstructor(headerClassNode, sourceClassNode);
+		} else if (info.getCopyType() == IntroducePImplInformation.CopyType.NOCOPY) {
+			context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_private, headerClassNode);
+			context.insertCopyConstructor(headerClassNode, sourceClassNode);
+		}
+
+		context.insertHeaderVisibility(ICPPASTVisibilityLabel.v_private, headerClassNode);
+		sm.worked(workTick++);
+		context.insertPointer(headerClassNode);
+		sm.worked(workTick++);
+		context.insertPrivateStatic(headerClassNode);
 	}
 
 	private NodeContainer<IASTNode> getSourceClassContainer(ASTRewrite sourceRewrite) {
@@ -479,21 +472,13 @@ public class IntroducePImplRefactoring extends CRefactoring {
 				.getDeclSpecifier(), classRewrite);
 	}
 
-	boolean existIncludeLibrary(String libraryStmt, IASTTranslationUnit unit) {
-		final String INCLUDE_REPLACE_REGEX = "(<|>|\")";
-		for (IASTPreprocessorStatement preprocStmt : unit.getAllPreprocessorStatements()) {
-			if (preprocStmt instanceof IASTPreprocessorIncludeStatement) {
-				IASTPreprocessorIncludeStatement include = (IASTPreprocessorIncludeStatement) preprocStmt;
-				if (include.getName().toString().replaceAll(INCLUDE_REPLACE_REGEX, "").equals(
-						libraryStmt.replaceAll(INCLUDE_REPLACE_REGEX, ""))) {
-					return true;
-				}
-			}
-		}
-		return false;
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		return null;  // Refactoring history is not supported.
 	}
-
-	ICPPASTUnaryExpression getOldImplReference(ICPPASTFunctionDefinition copyConstructorDefinition, IASTName pointerName) {
+	
+	
+	static ICPPASTUnaryExpression getOldImplReference(ICPPASTFunctionDefinition copyConstructorDefinition, IASTName pointerName) {
 		ICPPASTUnaryExpression oldImplReference = new CPPASTUnaryExpression();
 		oldImplReference.setOperator(CPPASTUnaryExpression.op_star);
 		ICPPASTFieldReference oldImplPointerField = new CPPASTFieldReference();
@@ -505,9 +490,18 @@ public class IntroducePImplRefactoring extends CRefactoring {
 		oldImplReference.setOperand(oldImplPointerField);
 		return oldImplReference;
 	}
-
-	@Override
-	protected RefactoringDescriptor getRefactoringDescriptor() {
-		return null;  // Refactoring history is not supported.
+	
+	static boolean existIncludeLibrary(String libraryStmt, IASTTranslationUnit unit) {
+		final String INCLUDE_REPLACE_REGEX = "(<|>|\")";
+		for (IASTPreprocessorStatement preprocStmt : unit.getAllPreprocessorStatements()) {
+			if (preprocStmt instanceof IASTPreprocessorIncludeStatement) {
+				IASTPreprocessorIncludeStatement include = (IASTPreprocessorIncludeStatement) preprocStmt;
+				if (include.getName().toString().replaceAll(INCLUDE_REPLACE_REGEX, "").equals(
+						libraryStmt.replaceAll(INCLUDE_REPLACE_REGEX, ""))) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

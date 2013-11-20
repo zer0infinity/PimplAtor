@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
@@ -62,7 +63,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.text.edits.TextEditGroup;
 
 @SuppressWarnings("restriction")
-public class IntroducePImplRefactoringContext {
+public class IntroducePImplContext {
 	
 	private static final String NONCOPYABLE = "noncopyable";
 	private static final String SHARED_PTR = "shared_ptr";
@@ -77,17 +78,38 @@ public class IntroducePImplRefactoringContext {
 	private static final String MAKE_SHARED = "make_shared";
 	
 	private IntroducePImplInformation info;
-	private IntroducePImplRefactoring refactoring;
 
-	IntroducePImplRefactoringContext(IntroducePImplRefactoring refactoring, IntroducePImplInformation info) {
-		this.refactoring = refactoring;
+	IntroducePImplContext(IntroducePImplInformation info) {
 		this.info = info;
 	}
+	
+	void initVisibility(ICPPASTCompositeTypeSpecifier originalHeaderClass,
+			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
+		if (originalHeaderClass.getDeclarations(true).length > 0
+				&& !(originalHeaderClass.getDeclarations(true)[0] instanceof ICPPASTVisibilityLabel)) {
+			if (originalHeaderClass.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
+				info.setActualOriginalVisibility(ICPPASTVisibilityLabel.v_private);
+				initImplVisibility(ICPPASTVisibilityLabel.v_private, originalHeaderClass.getKey(), implClassNode);
+			} else {
+				info.setActualOriginalVisibility(ICPPASTVisibilityLabel.v_public);
+				initImplVisibility(ICPPASTVisibilityLabel.v_public, originalHeaderClass.getKey(), implClassNode);
+			}
+		}
+	}
 
-	void handleFunctionDeclarator(IASTSimpleDeclaration simpleDeclaration,
+	private void initImplVisibility(int visibility, int originalHeaderType,
+			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) {
+		if (originalHeaderType == info.getClassType()) {
+			info.setActualImplVisibility(visibility);
+		} else {
+			insertImplVisibility(visibility, implClassNode);
+		}
+	}
+
+	void handleFunctionDeclarator(IASTSimpleDeclaration simpleDeclaration, IIndex index,
 			NodeContainer<ICPPASTCompositeTypeSpecifier> headerClassNode, NodeContainer<IASTNode> sourceClassNode,
 			NodeContainer<ICPPASTCompositeTypeSpecifier> implClassNode) throws CoreException {
-		ICPPASTFunctionDefinition functionDefinition = refactoring.getDefinitionOfDeclaration(simpleDeclaration);
+		ICPPASTFunctionDefinition functionDefinition = IntroducePImplRefactoring.getDefinitionOfDeclaration(simpleDeclaration, info, index);
 		sourceClassNode.remove(functionDefinition, new TextEditGroup("Definition removed from source"));
 		handleFunctionDefinition(functionDefinition.copy(), headerClassNode, sourceClassNode, implClassNode);
 	}
@@ -318,7 +340,7 @@ public class IntroducePImplRefactoringContext {
 	}
 
 	private void insertInclude(String libraryStmt, ASTRewrite rewrite, IASTTranslationUnit unit) {
-		if (!refactoring.existIncludeLibrary(libraryStmt, unit)) {
+		if (!IntroducePImplRefactoring.existIncludeLibrary(libraryStmt, unit)) {
 			IASTNode insertPoint = null;
 			if (unit.getDeclarations().length > 0) {
 				insertPoint = unit.getDeclarations()[0];
@@ -467,7 +489,7 @@ public class IntroducePImplRefactoringContext {
 		IASTName pointerName = new CPPASTName(info.getPointerNameImpl().toCharArray());
 		initializer.setMemberInitializerId(pointerName);
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
-			ICPPASTUnaryExpression oldImplReference = refactoring.getOldImplReference(copyConstructorDefinition, pointerName);
+			ICPPASTUnaryExpression oldImplReference = IntroducePImplRefactoring.getOldImplReference(copyConstructorDefinition, pointerName);
 			ICPPASTFunctionCallExpression function = insertMakeSharedDefinition();
 			function.setArguments(new IASTInitializerClause[] { oldImplReference });
 			initializer.setInitializer(new CPPASTConstructorInitializer(new IASTInitializerClause[] { function }));
@@ -480,7 +502,7 @@ public class IntroducePImplRefactoringContext {
 		typeId.setDeclSpecifier(implTypeSpecifier);
 		newExpression.setTypeId(typeId);
 		
-		ICPPASTUnaryExpression oldImplReference = refactoring.getOldImplReference(copyConstructorDefinition, pointerName);
+		ICPPASTUnaryExpression oldImplReference = IntroducePImplRefactoring.getOldImplReference(copyConstructorDefinition, pointerName);
 		
 		newExpression.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { oldImplReference }));
 		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
