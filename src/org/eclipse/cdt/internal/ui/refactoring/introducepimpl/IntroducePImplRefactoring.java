@@ -50,7 +50,6 @@ public class IntroducePImplRefactoring extends IntroducePImplContext {
 	
 	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
 		super(celem, selection, info);
-		name = Messages.IntroducePImpl_IntroducePImpl;
 	}
 	
 	@Override
