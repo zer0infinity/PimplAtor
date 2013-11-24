@@ -42,7 +42,7 @@ public class IntroducePImplClassInputPage extends UserInputWizardPage {
 		classRadioButton.addSelectionListener(new SpecialSelectionListener(info, classSpecifier));
 	}
 
-	class SpecialSelectionListener implements SelectionListener {
+	private class SpecialSelectionListener implements SelectionListener {
 
 		IntroducePImplInformation info;
 		ICPPASTCompositeTypeSpecifier classSpecifier;

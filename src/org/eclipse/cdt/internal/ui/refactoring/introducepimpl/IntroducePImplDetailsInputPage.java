@@ -34,9 +34,6 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 	// Library Group
 	private Button boostRadioButton;
 	private Button cpp11RadioButton;
-	// Class Type Group
-	private Button structRadioButton;
-	private Button classRadioButton;
 
 	private Pattern classnameDiscouraged = Pattern.compile("[A-Z].*");
 	private Pattern pointernameDiscouraged = Pattern.compile("(_|[a-z]).*");
@@ -111,25 +108,32 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 		classTypeGroup.setLayoutData(getGroupBox());
 		classTypeGroup.setLayout(new GridLayout());
 
-		structRadioButton = new Button(classTypeGroup, SWT.RADIO);
+		createStructRadioButton(classTypeGroup);
+		createClassRadioButton(classTypeGroup);
+	}
+
+	private void createClassRadioButton(Group classTypeGroup) {
+		Button classRadioButton = new Button(classTypeGroup, SWT.RADIO);
+		classRadioButton.setText(Messages.IntroducePImpl_Class);
+		classRadioButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setClassType(ICPPASTCompositeTypeSpecifier.k_class);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
+	private void createStructRadioButton(Group classTypeGroup) {
+		Button structRadioButton = new Button(classTypeGroup, SWT.RADIO);
 		structRadioButton.setText(Messages.IntroducePImpl_Struct);
 		structRadioButton.setSelection(true);
 		structRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
 				info.setClassType(ICPPASTCompositeTypeSpecifier.k_struct);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		classRadioButton = new Button(classTypeGroup, SWT.RADIO);
-		classRadioButton.setText(Messages.IntroducePImpl_Class);
-		classRadioButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				info.setClassType(ICPPASTCompositeTypeSpecifier.k_class);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -143,6 +147,49 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 		ptrTypeGroup.setLayoutData(getGroupBox());
 		ptrTypeGroup.setLayout(new GridLayout());
 
+		createStandardRadioButton(ptrTypeGroup);
+		createSharedButton(ptrTypeGroup);
+		createUniqueButton(ptrTypeGroup);
+
+		createLibraryTypeGroup(ptrTypeGroup);
+	}
+
+	private void createUniqueButton(Group ptrTypeGroup) {
+		uniqueButton = new Button(ptrTypeGroup, SWT.RADIO);
+		uniqueButton.setText(Messages.IntroducePImpl_UniquePtr);
+		uniqueButton.setSelection(true);
+		uniqueButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setPointerType(IntroducePImplInformation.PointerType.UNIQUE);
+				shallowRadioButton.setEnabled(true);
+				boostRadioButton.setEnabled(false);
+				cpp11RadioButton.setEnabled(false);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
+	private void createSharedButton(Group ptrTypeGroup) {
+		sharedButton = new Button(ptrTypeGroup, SWT.RADIO);
+		sharedButton.setText(Messages.IntroducePImpl_SharedPtr);
+		sharedButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setPointerType(IntroducePImplInformation.PointerType.SHARED);
+				shallowRadioButton.setEnabled(true);
+				boostRadioButton.setEnabled(true);
+				cpp11RadioButton.setEnabled(true);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
+	private void createStandardRadioButton(Group ptrTypeGroup) {
 		standardRadioButton = new Button(ptrTypeGroup, SWT.RADIO);
 		standardRadioButton.setText(Messages.IntroducePImpl_StandardPtr);
 		standardRadioButton.addSelectionListener(new SelectionListener() {
@@ -160,39 +207,6 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
-		sharedButton = new Button(ptrTypeGroup, SWT.RADIO);
-		sharedButton.setText(Messages.IntroducePImpl_SharedPtr);
-		sharedButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				info.setPointerType(IntroducePImplInformation.PointerType.SHARED);
-				shallowRadioButton.setEnabled(true);
-				boostRadioButton.setEnabled(true);
-				cpp11RadioButton.setEnabled(true);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		
-		uniqueButton = new Button(ptrTypeGroup, SWT.RADIO);
-		uniqueButton.setText(Messages.IntroducePImpl_UniquePtr);
-		uniqueButton.setSelection(true);
-		uniqueButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				info.setPointerType(IntroducePImplInformation.PointerType.UNIQUE);
-				shallowRadioButton.setEnabled(true);
-				boostRadioButton.setEnabled(false);
-				cpp11RadioButton.setEnabled(false);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		createLibraryTypeGroup(ptrTypeGroup);
 	}
 
 	private void createLibraryTypeGroup(Composite parent) {
@@ -200,20 +214,12 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 		libraryTypeGroup.setText(Messages.IntroducePImpl_LibraryType);
 		libraryTypeGroup.setLayoutData(getGroupBox());
 		libraryTypeGroup.setLayout(new GridLayout());
-		boostRadioButton = new Button(libraryTypeGroup, SWT.RADIO);
-		boostRadioButton.setText(Messages.IntroducePImpl_Boost);
-		boostRadioButton.setSelection(true);
-		boostRadioButton.setEnabled(false);
-		boostRadioButton.addSelectionListener(new SelectionListener() {
+		
+		createBoostRadioButton(libraryTypeGroup);
+		createCpp11RadioButton(libraryTypeGroup);
+	}
 
-			public void widgetSelected(SelectionEvent e) {
-				info.setLibraryType(IntroducePImplInformation.LibraryType.BOOST);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
+	private void createCpp11RadioButton(Group libraryTypeGroup) {
 		cpp11RadioButton = new Button(libraryTypeGroup, SWT.RADIO);
 		cpp11RadioButton.setText(Messages.IntroducePImpl_STD);
 		cpp11RadioButton.setEnabled(false);
@@ -228,25 +234,63 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 		});
 	}
 
+	private void createBoostRadioButton(Group libraryTypeGroup) {
+		boostRadioButton = new Button(libraryTypeGroup, SWT.RADIO);
+		boostRadioButton.setText(Messages.IntroducePImpl_Boost);
+		boostRadioButton.setSelection(true);
+		boostRadioButton.setEnabled(false);
+		boostRadioButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setLibraryType(IntroducePImplInformation.LibraryType.BOOST);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
 	private void createCopyTypeGroup(Composite parent) {
 		Group copyTypeGroup = new Group(parent, SWT.NONE);
 		copyTypeGroup.setText(Messages.IntroducePImpl_CopyType);
 		copyTypeGroup.setLayoutData(getGroupBox());
 		copyTypeGroup.setLayout(new GridLayout());
 
-		deepRadioButton = new Button(copyTypeGroup, SWT.RADIO);
-		deepRadioButton.setText(Messages.IntroducePImpl_DeepCopy);
-		deepRadioButton.setSelection(true);
-		deepRadioButton.addSelectionListener(new SelectionListener() {
+		createDeepRadioButton(copyTypeGroup);
+		createShallowRadioButton(copyTypeGroup);
+		createNoCopyRadioButton(copyTypeGroup);
+		createNonCopyableRadioButton(copyTypeGroup);
+	}
+
+	private void createNonCopyableRadioButton(Group copyTypeGroup) {
+		Button nonCopyableRadioButton = new Button(copyTypeGroup, SWT.RADIO);
+		nonCopyableRadioButton.setText(Messages.IntroducePImpl_NonCopyable);
+		nonCopyableRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.DEEP);
+				info.setCopyType(IntroducePImplInformation.CopyType.NONCOPYABLE);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+	}
 
+	private void createNoCopyRadioButton(Group copyTypeGroup) {
+		noCopyRadioButton = new Button(copyTypeGroup, SWT.RADIO);
+		noCopyRadioButton.setText(Messages.IntroducePImpl_NoCopy);
+		noCopyRadioButton.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				info.setCopyType(IntroducePImplInformation.CopyType.NOCOPY);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
+	private void createShallowRadioButton(Group copyTypeGroup) {
 		shallowRadioButton = new Button(copyTypeGroup, SWT.RADIO);
 		shallowRadioButton.setText(Messages.IntroducePImpl_ShallowCopy);
 		shallowRadioButton.setEnabled(false);
@@ -259,25 +303,16 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+	}
 
-		noCopyRadioButton = new Button(copyTypeGroup, SWT.RADIO);
-		noCopyRadioButton.setText(Messages.IntroducePImpl_NoCopy);
-		noCopyRadioButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.NOCOPY);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		nonCopyableRadioButton = new Button(copyTypeGroup, SWT.RADIO);
-		nonCopyableRadioButton.setText(Messages.IntroducePImpl_NonCopyable);
-		nonCopyableRadioButton.addSelectionListener(new SelectionListener() {
+	private void createDeepRadioButton(Group copyTypeGroup) {
+		deepRadioButton = new Button(copyTypeGroup, SWT.RADIO);
+		deepRadioButton.setText(Messages.IntroducePImpl_DeepCopy);
+		deepRadioButton.setSelection(true);
+		deepRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				info.setCopyType(IntroducePImplInformation.CopyType.NONCOPYABLE);
+				info.setCopyType(IntroducePImplInformation.CopyType.DEEP);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
