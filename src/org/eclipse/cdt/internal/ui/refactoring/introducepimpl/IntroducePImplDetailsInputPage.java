@@ -198,7 +198,8 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 				info.setPointerType(IntroducePImplInformation.PointerType.STANDARD);
 				shallowRadioButton.setEnabled(false);
 				shallowRadioButton.setSelection(false);
-				if(!noCopyRadioButton.getSelection() && !nonCopyableRadioButton.getSelection())
+				if(!noCopyRadioButton.getSelection()
+						&& !nonCopyableRadioButton.getSelection())
 					deepRadioButton.setSelection(true);
 				boostRadioButton.setEnabled(false);
 				cpp11RadioButton.setEnabled(false);
@@ -263,7 +264,7 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 	}
 
 	private void createNonCopyableRadioButton(Group copyTypeGroup) {
-		Button nonCopyableRadioButton = new Button(copyTypeGroup, SWT.RADIO);
+		nonCopyableRadioButton = new Button(copyTypeGroup, SWT.RADIO);
 		nonCopyableRadioButton.setText(Messages.IntroducePImpl_NonCopyable);
 		nonCopyableRadioButton.addSelectionListener(new SelectionListener() {
 
@@ -293,7 +294,6 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 	private void createShallowRadioButton(Group copyTypeGroup) {
 		shallowRadioButton = new Button(copyTypeGroup, SWT.RADIO);
 		shallowRadioButton.setText(Messages.IntroducePImpl_ShallowCopy);
-		shallowRadioButton.setEnabled(false);
 		shallowRadioButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
