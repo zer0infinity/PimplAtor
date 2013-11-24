@@ -442,7 +442,6 @@ public class IntroducePImplContext extends CRefactoring {
 		IASTCompoundStatement compoundStatement = new CPPASTCompoundStatement();
 		ICPPASTFunctionCallExpression memberToCallExpression = new CPPASTFunctionCallExpression();
 
-//		memberToCallExpression.setParameterExpression(createParameterExpression(functionDefinition));
 		memberToCallExpression.setArguments(createParameterExpression(functionDefinition));
 		ICPPASTFieldReference fieldReference = new CPPASTFieldReference();
 		fieldReference.setIsPointerDereference(true);
