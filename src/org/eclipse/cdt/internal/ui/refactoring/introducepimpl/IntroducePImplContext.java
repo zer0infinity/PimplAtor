@@ -86,7 +86,7 @@ public class IntroducePImplContext extends CRefactoring {
 	private static final String BOOST = "boost";
 	private static final String COPY_PARAM_NAME = "toCopy";
 	private static final String INCLUDE_LABEL = "#include ";
-	private static final String BOOST_SHARED_PTR_INCLUDE = "<boost/shared_ptr.hpp>";
+	private static final String BOOST_MAKE_SHARED_INCLUDE = "<boost/make_shared.hpp>";
 	private static final String SHARED_AND_UNIQUE_PTR_INCLUDE = "<memory>";
 	private static final String BOOST_NONCOPYABLE_INCLUDE = "<boost/noncopyable.hpp>";
 	private static final String MAKE_SHARED = "make_shared";
@@ -332,7 +332,7 @@ public class IntroducePImplContext extends CRefactoring {
 		boolean includesInsserted = false;
 		if (info.getPointerType() == IntroducePImplInformation.PointerType.SHARED) {
 			if (info.getLibraryType() == IntroducePImplInformation.LibraryType.BOOST) {
-				insertInclude(BOOST_SHARED_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
+				insertInclude(BOOST_MAKE_SHARED_INCLUDE, headerRewrite, info.getHeaderUnit());
 			} else {
 				insertInclude(SHARED_AND_UNIQUE_PTR_INCLUDE, headerRewrite, info.getHeaderUnit());
 			}
@@ -442,6 +442,7 @@ public class IntroducePImplContext extends CRefactoring {
 		IASTCompoundStatement compoundStatement = new CPPASTCompoundStatement();
 		ICPPASTFunctionCallExpression memberToCallExpression = new CPPASTFunctionCallExpression();
 
+//		memberToCallExpression.setParameterExpression(createParameterExpression(functionDefinition));
 		memberToCallExpression.setArguments(createParameterExpression(functionDefinition));
 		ICPPASTFieldReference fieldReference = new CPPASTFieldReference();
 		fieldReference.setIsPointerDereference(true);
@@ -524,25 +525,18 @@ public class IntroducePImplContext extends CRefactoring {
 		initializer.setInitializer(new CPPASTConstructorInitializer(new IASTExpression[] { newExpression }));
 		return initializer;
 	}
-
+	
 	private IASTExpression[] createParameterExpression(IASTDeclaration member) {
 		IASTExpression[] parameterExpression = null;
-		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) ((CPPASTFunctionDefinition) member)
-				.getDeclarator()).getParameters();
+		IASTParameterDeclaration[] parameters = ((ICPPASTFunctionDeclarator) ((CPPASTFunctionDefinition) member).getDeclarator()).getParameters();
 		if (parameters != null) {
-			if (parameters.length == 1) {
-				IASTIdExpression singleParameterExpression = new CPPASTIdExpression();
-				singleParameterExpression.setName(parameters[0].getDeclarator().getName().copy());
-				parameterExpression = new IASTExpression[] { singleParameterExpression };
-			} else {
-				ICPPASTExpressionList parameterList = new CPPASTExpressionList();
-				for (IASTParameterDeclaration parameter : parameters) {
-					IASTIdExpression expression = new CPPASTIdExpression();
-					expression.setName(parameter.getDeclarator().getName().copy());
-					parameterList.addExpression(expression);
-				}
-				parameterExpression = parameterList.getExpressions();
+			ICPPASTExpressionList parameterList = new CPPASTExpressionList();
+			for (IASTParameterDeclaration parameter : parameters) {
+				IASTIdExpression expression = new CPPASTIdExpression();
+				expression.setName(parameter.getDeclarator().getName().copy());
+				parameterList.addExpression(expression);
 			}
+			parameterExpression = parameterList.getExpressions();
 		}
 		return parameterExpression;
 	}

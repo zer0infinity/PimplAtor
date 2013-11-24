@@ -383,24 +383,22 @@ public class IntroducePImplRefactoring extends IntroducePImplContext {
 					return super.visit(namespaceInHeader);
 				}
 			});
-		} else {
-			if (info.getClassSpecifier().getParent().getParent() instanceof ICPPASTNamespaceDefinition) {
-				ICPPASTNamespaceDefinition namespaceInHeader = (ICPPASTNamespaceDefinition) info.getClassSpecifier().getParent().getParent();
-				final String namespaceNameInHeader = namespaceInHeader.getName().toString();
-				info.getSourceUnit().accept(new ASTVisitor() {
-					{
-						shouldVisitNamespaces = true;
-					}
+		} else if (info.getClassSpecifier().getParent().getParent() instanceof ICPPASTNamespaceDefinition) {
+			ICPPASTNamespaceDefinition namespaceInHeader = (ICPPASTNamespaceDefinition) info.getClassSpecifier().getParent().getParent();
+			final String namespaceNameInHeader = namespaceInHeader.getName().toString();
+			info.getSourceUnit().accept(new ASTVisitor() {
+				{
+					shouldVisitNamespaces = true;
+				}
 
-					public int visit(ICPPASTNamespaceDefinition namespaceInSource) {
-						if (namespaceInSource.getName().toString().equals(namespaceNameInHeader)) {
-							container.setNode(namespaceInSource);
-							return ASTVisitor.PROCESS_ABORT;
-						}
-						return super.visit(namespaceInSource);
+				public int visit(ICPPASTNamespaceDefinition namespaceInSource) {
+					if (namespaceInSource.getName().toString().equals(namespaceNameInHeader)) {
+						container.setNode(namespaceInSource);
+						return ASTVisitor.PROCESS_ABORT;
 					}
-				});
-			}
+					return super.visit(namespaceInSource);
+				}
+			});
 		}
 		return container;
 	}
