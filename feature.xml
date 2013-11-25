@@ -5,11 +5,11 @@
       version="1.0.0"
       provider-name="HSR University of applied sciences Rapperswil">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      PIMPL (idiom) Refactoring
    </description>
 
-   <copyright>
+   <copyright url="http://www.hsr.ch">
       Copyright (c) 2012 Institute for Software, HSR Hochschule fuer
 Technik Rapperswil, University of applied sciences and others
 All rights reserved.
@@ -113,7 +113,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
 </feature>
