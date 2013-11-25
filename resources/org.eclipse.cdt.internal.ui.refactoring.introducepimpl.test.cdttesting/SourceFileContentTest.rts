@@ -1,5 +1,4 @@
 //!Very simple class, standard config
-//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
 //@.config
 classType=struct
 pointerType=standard

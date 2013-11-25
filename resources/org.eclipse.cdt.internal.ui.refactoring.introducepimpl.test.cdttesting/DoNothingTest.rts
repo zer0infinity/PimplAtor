@@ -1,5 +1,4 @@
 //!DoNothing
-//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
 //@Example.h
 #ifndef EXAMPLE_H_
 #define EXAMPLE_H_
