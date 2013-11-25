@@ -1,24 +1,25 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.DeclarationFinder;
 import org.jmock.Expectations;
 import org.jmock.integration.junit3.MockObjectTestCase;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 
+@SuppressWarnings("restriction")
 public class DeclarationFinderTest extends MockObjectTestCase {
 	
 	@Rule public JUnitRuleMockery context = new JUnitRuleMockery();
 
 	public void testFindDeclarationInTranslationUnit() {
-		final IASTTranslationUnit tu = context.mock(IASTTranslationUnit.class);
+		IASTTranslationUnit tu = new CPPASTTranslationUnit();
+		assertNotNull(tu);
 		final IIndexName indexName = context.mock(IIndexName.class);
 		context.checking(new Expectations() {{
-			oneOf(tu).accept(with(aNonNull(ASTVisitor.class)));
 			oneOf(indexName);
 			allowing(indexName).getNodeOffset(); will(returnValue(String.class));
 			allowing(indexName).getNodeLength(); will(returnValue(Integer.class));
