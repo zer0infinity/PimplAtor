@@ -293,12 +293,12 @@
 	<target name="checkCompilationResults" if="compilation.error.occured">
 		<echo file="${compilation.problem.marker}" message="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
 		<eclipse.logCompileError bundle="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" log="${compilation.prereq.log}">
-			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/compilation.problem"/>
-			<include name="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl_1.0.0/compilation.problem"/>
 			<include name="D:/MyFiles/Coding/Java/workspace_sa/ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/compilation.problem"/>
-			<include name="${pluginTemp}/ch.hsr.ifs.cdttesting_3.0.0.201311191901/compilation.problem"/>
+			<include name="${pluginTemp}/ch.hsr.ifs.cdttesting_3.0.0.201311261421/compilation.problem"/>
 			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.jmock/compilation.problem"/>
 			<include name="${pluginTemp}/org.jmock_2.6.0/compilation.problem"/>
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/compilation.problem"/>
+			<include name="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl_1.0.0/compilation.problem"/>
 		</eclipse.logCompileError>
 	</target>
 
