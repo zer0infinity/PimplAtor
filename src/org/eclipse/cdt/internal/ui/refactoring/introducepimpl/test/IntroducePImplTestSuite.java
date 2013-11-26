@@ -3,7 +3,7 @@ package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.cdttesting.DoNothingTest;
-import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.cdttesting.SourceFileContentTest;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.cdttesting.RefactoringContentTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.DeclarationFinderTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.IntroducePImplRefactoringTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.SelectionHelperTest;
@@ -18,7 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	DeclarationFinderTest.class,
 	SelectionHelperTest.class,
 	DoNothingTest.class,
-	SourceFileContentTest.class,
+	RefactoringContentTest.class,
 })
 public class IntroducePImplTestSuite extends TestSuite {
 }

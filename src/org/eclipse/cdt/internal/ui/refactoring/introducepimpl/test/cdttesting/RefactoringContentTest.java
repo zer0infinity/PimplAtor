@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import ch.hsr.ifs.cdttesting.rts.junit4.CDTProjectJUnit4RtsTest;
 
-public class SourceFileContentTest extends CDTProjectJUnit4RtsTest {
+public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 	
 	@Override
 	@Test
