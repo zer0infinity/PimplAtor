@@ -3,7 +3,6 @@ package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -65,6 +64,8 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 
 		classNameText.setText(info.getClassSpecifier().getName().toString()	+ "Impl");
 		pointerNameText.setText("_impl");
+		info.setClassNameImpl(classNameText.getText());
+		info.setPointerNameImpl(pointerNameText.getText());
 	}
 
 	private void createPointerNameLabel(Composite result, GridData textData) {
@@ -359,11 +360,5 @@ public class IntroducePImplDetailsInputPage extends UserInputWizardPage {
 		} else {
 			setPageComplete(false);
 		}
-	}
-
-	public IWizardPage getNextPage() {
-		info.setClassNameImpl(classNameText.getText());
-		info.setPointerNameImpl(pointerNameText.getText());
-		return super.getNextPage();
 	}
 }
