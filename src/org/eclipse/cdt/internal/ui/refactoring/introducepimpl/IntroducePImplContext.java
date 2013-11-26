@@ -452,18 +452,33 @@ public class IntroducePImplContext extends CRefactoring {
 		idExpression.setName(pointerName);
 		fieldReference.setFieldOwner(idExpression);
 		memberToCallExpression.setFunctionNameExpression(fieldReference);
-
-		if ((((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier() == null)
-				|| (((ICPPASTSimpleDeclSpecifier) ((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier()).getType() == ICPPASTSimpleDeclSpecifier.t_void)) {
-			IASTExpressionStatement mappingStatement = new CPPASTExpressionStatement();
-			mappingStatement.setExpression(memberToCallExpression);
-			compoundStatement.addStatement(mappingStatement);
+		
+		if ((((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier() == null)) {
+			expressionStatement(compoundStatement, memberToCallExpression);
+		} else if((((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier() instanceof ICPPASTSimpleDeclSpecifier)) {
+			if ((((ICPPASTSimpleDeclSpecifier) ((CPPASTFunctionDefinition) functionDefinition).getDeclSpecifier()).getType() == ICPPASTSimpleDeclSpecifier.t_void)) {
+				expressionStatement(compoundStatement, memberToCallExpression);
+			} else {
+				returnStatement(compoundStatement, memberToCallExpression);
+			}
 		} else {
-			IASTReturnStatement mappingStatement = new CPPASTReturnStatement();
-			mappingStatement.setReturnValue(memberToCallExpression);
-			compoundStatement.addStatement(mappingStatement);
+			returnStatement(compoundStatement, memberToCallExpression);
 		}
 		return compoundStatement;
+	}
+
+	private void expressionStatement(IASTCompoundStatement compoundStatement,
+			ICPPASTFunctionCallExpression memberToCallExpression) {
+		IASTExpressionStatement mappingStatement = new CPPASTExpressionStatement();
+		mappingStatement.setExpression(memberToCallExpression);
+		compoundStatement.addStatement(mappingStatement);
+	}
+
+	private void returnStatement(IASTCompoundStatement compoundStatement,
+			ICPPASTFunctionCallExpression memberToCallExpression) {
+		IASTReturnStatement mappingStatement = new CPPASTReturnStatement();
+		mappingStatement.setReturnValue(memberToCallExpression);
+		compoundStatement.addStatement(mappingStatement);
 	}
 	
 	private ICPPASTConstructorChainInitializer createConstructorPImplInitializer(ICPPASTFunctionDefinition memberDefinition) {

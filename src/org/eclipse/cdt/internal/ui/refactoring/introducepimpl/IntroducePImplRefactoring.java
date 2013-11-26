@@ -405,9 +405,6 @@ public class IntroducePImplRefactoring extends IntroducePImplContext {
 
 	private NodeContainer<ICPPASTCompositeTypeSpecifier> getHeaderClassContainer(ASTRewrite headerRewrite) {
 		IASTSimpleDeclaration classNode = NodeFactory.createClassDeclaration(info.getClassSpecifier().getName().toString(), info.getClassSpecifier().getKey());
-		/**
-		 * TODO: check visilibity public???
-		 */
 		((ICPPASTCompositeTypeSpecifier) classNode.getDeclSpecifier()).addDeclaration(NodeFactory
 				.createVisibilityLabel(ICPPASTVisibilityLabel.v_public));
 		if (info.getCopyType() == IntroducePImplInformation.CopyType.NONCOPYABLE) {
