@@ -3,20 +3,29 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Introduce PImpl Refactoring Test
 Bundle-SymbolicName: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;singleton:=true
 Bundle-Version: 1.0.0
-Require-Bundle: org.junit;bundle-version="4.11.0",
- org.eclipse.cdt.internal.ui.refactoring.introducepimpl;bundle-version="1.0.0",
+Require-Bundle: org.eclipse.cdt.internal.ui.refactoring.introducepimpl;bundle-version="1.0.0",
  org.jmock;bundle-version="2.6.0",
- org.eclipse.ltk.core.refactoring,
- org.eclipse.equinox.registry,
- org.eclipse.cdt.core,
- org.eclipse.cdt.ui,
- org.eclipse.jface,
- org.eclipse.text,
- ch.hsr.ifs.cdttesting,
- org.eclipse.jface.text;bundle-version="3.8.101",
- org.eclipse.ui.workbench,
- org.eclipse.ui;bundle-version="3.105.0",
- org.eclipse.core.runtime;bundle-version="3.9.0"
+ ch.hsr.ifs.cdttesting
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: HSR University of applied sciences Rapperswil
 Bundle-Activator: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplTestPlugin
+Import-Package: junit.framework;version="4.11.0",
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.core.dom.ast,
+ org.eclipse.cdt.core.dom.ast.cpp,
+ org.eclipse.cdt.core.model,
+ org.eclipse.cdt.internal.ui.refactoring,
+ org.eclipse.cdt.ui,
+ org.eclipse.core.internal.resources,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.jface,
+ org.eclipse.jface.text,
+ org.eclipse.jface.viewers,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.ui,
+ org.eclipse.ui.plugin,
+ org.junit;version="4.11.0",
+ org.junit.runner;version="4.11.0",
+ org.junit.runners;version="4.11.0",
+ org.osgi.framework;version="1.7.0"

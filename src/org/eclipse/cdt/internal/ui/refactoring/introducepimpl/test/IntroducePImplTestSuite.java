@@ -17,8 +17,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	IntroducePImplRefactoringTest.class,
 	DeclarationFinderTest.class,
 	SelectionHelperTest.class,
-	DoNothingTest.class,
-	RefactoringContentTest.class,
+//	DoNothingTest.class,
+//	RefactoringContentTest.class,
 })
 public class IntroducePImplTestSuite extends TestSuite {
 }

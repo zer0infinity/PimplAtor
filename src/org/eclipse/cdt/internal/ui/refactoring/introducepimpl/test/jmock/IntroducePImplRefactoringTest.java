@@ -36,7 +36,7 @@ public class IntroducePImplRefactoringTest extends MockObjectTestCase {
 			oneOf(selection);
 		}});
 		info = new IntroducePImplInformation();
-		refactoring = new IntroducePImplRefactoring(selection, iwcopy, info);
+		refactoring = new IntroducePImplRefactoring(iwcopy, selection, info);
 	}
 	
 	public void testCheckInitialCondition() {

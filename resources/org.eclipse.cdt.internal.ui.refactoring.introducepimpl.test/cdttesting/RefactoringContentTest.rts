@@ -170,7 +170,7 @@ namespace a {
 }
 
 
-//!Very simple class, using boost::shared_ptr and a class as impl, implementet as deepcopy
+//!Very simple class, using boost::shared_ptr and a class as impl, implemented as deepcopy
 //#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
 //@.config
 classType=class
@@ -196,7 +196,7 @@ public:
 #ifndef EXAMPLE_H_
 #define EXAMPLE_H_
 
-#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 class Example {
 public:
@@ -241,25 +241,25 @@ void Example::foo()
 
 
 Example::Example()
-:_impl(new ExampleImpl)
+:_impl(boost::make_shared<ExampleImpl>())
 {
 }
 
 
 
 Example::Example(const Example & toCopy)
-:_impl(new ExampleImpl(*toCopy._impl))
+:_impl(boost::make_shared<ExampleImpl>(*toCopy._impl))
 {
 }
 
 
 
-//!Very simple class, using tr1::shared_ptr, implementet as shallow copy
+//!Very simple class, using std::shared_ptr, implemented as shallow copy
 //#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
 //@.config
 classType=struct
 pointerType=shared
-libraryType=tr1
+libraryType=std
 copyType=shallow
 classNameImpl=ExampleImpl
 pointerNameImpl=_impl
@@ -279,14 +279,14 @@ public:
 #ifndef EXAMPLE_H_
 #define EXAMPLE_H_
 
-#include <tr1/memory>
+#include <memory>
 
 class Example {
 public:
     void foo();
     Example();
 private:
-    std::tr1::shared_ptr<struct ExampleImpl> _impl;
+    std::shared_ptr<struct ExampleImpl> _impl;
 };
 
 #endif /*EXAMPLE_H_*/
@@ -322,7 +322,7 @@ void Example::foo()
 
 
 Example::Example()
-:_impl(new ExampleImpl)
+:_impl(std::make_shared<ExampleImpl>())
 {
 }
 
@@ -484,7 +484,7 @@ private:
 #ifndef EXAMPLE_H_
 #define EXAMPLE_H_
 
-#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 class Example {
 public:
@@ -560,7 +560,7 @@ private:
 
 
 Example::Example(int a, char b)
-:_impl(new ExampleImpl(a, b))
+:_impl(boost::make_shared<ExampleImpl>(a, b))
 {
 }
 
