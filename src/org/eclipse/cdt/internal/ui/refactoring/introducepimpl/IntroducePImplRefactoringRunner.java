@@ -19,7 +19,7 @@ public class IntroducePImplRefactoringRunner extends RefactoringRunner {
 	@Override
 	public void run() {
 		IntroducePImplInformation info = new IntroducePImplInformation();
-		CRefactoring refactoring = new IntroducePImplRefactoring(selection, element, info);
+		CRefactoring refactoring = new IntroducePImplRefactoring(element, selection, info);
 		CRefactoringContext context = new CRefactoringContext(refactoring);
 		refactoring.setContext(context);
 		IntroducePImplRefactoringWizard wizard = new IntroducePImplRefactoringWizard(refactoring, info);

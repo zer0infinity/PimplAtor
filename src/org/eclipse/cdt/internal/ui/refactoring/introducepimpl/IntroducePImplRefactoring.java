@@ -48,7 +48,7 @@ public class IntroducePImplRefactoring extends IntroducePImplContext {
 
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	
-	public IntroducePImplRefactoring(ISelection selection, ICElement celem, IntroducePImplInformation info) {
+	public IntroducePImplRefactoring(ICElement celem, ISelection selection, IntroducePImplInformation info) {
 		super(celem, selection, info);
 	}
 	
