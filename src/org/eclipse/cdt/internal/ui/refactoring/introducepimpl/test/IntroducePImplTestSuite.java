@@ -2,8 +2,6 @@ package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.cdttesting.DoNothingTest;
-import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.cdttesting.RefactoringContentTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.DeclarationFinderTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.IntroducePImplRefactoringTest;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.jmock.SelectionHelperTest;

@@ -20,11 +20,6 @@ public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 	private IntroducePImplInformation info;
 	
 	@Override
-	public void setUp() throws Exception {
-		info = new IntroducePImplInformation();
-	}
-	
-	@Override
 	@Test
 	public void runTest() throws Throwable {
 		IFile refFile = project.getFile(activeFileName);

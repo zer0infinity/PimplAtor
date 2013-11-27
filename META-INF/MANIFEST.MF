@@ -5,12 +5,12 @@ Bundle-SymbolicName: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.cdt.internal.ui.refactoring.introducepimpl;bundle-version="1.0.0",
  org.jmock;bundle-version="2.6.0",
- ch.hsr.ifs.cdttesting
+ ch.hsr.ifs.cdttesting,
+ org.junit;bundle-version="4.11.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: HSR University of applied sciences Rapperswil
 Bundle-Activator: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplTestPlugin
-Import-Package: junit.framework;version="4.11.0",
- org.eclipse.cdt.core,
+Import-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.dom.ast,
  org.eclipse.cdt.core.dom.ast.cpp,
  org.eclipse.cdt.core.model,
@@ -25,7 +25,4 @@ Import-Package: junit.framework;version="4.11.0",
  org.eclipse.ltk.core.refactoring,
  org.eclipse.ui,
  org.eclipse.ui.plugin,
- org.junit;version="4.11.0",
- org.junit.runner;version="4.11.0",
- org.junit.runners;version="4.11.0",
  org.osgi.framework;version="1.7.0"
