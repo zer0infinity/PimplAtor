@@ -40,7 +40,6 @@ public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
 		assertTrue(finalConditions.isOK());
 		createChange.perform(NULL_PROGRESS_MONITOR);
-//		compareFiles(fileMap);
 	}
 	
 	@Override
@@ -56,6 +55,8 @@ public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 		String pointerType = properties.getProperty("pointerType", "standard");
 		if (pointerType.equals("shared")){
 			info.setPointerType(IntroducePImplInformation.PointerType.SHARED);
+		} else if(pointerType.equals("unique")) {
+			info.setPointerType(IntroducePImplInformation.PointerType.UNIQUE);
 		} else {
 			info.setPointerType(IntroducePImplInformation.PointerType.STANDARD);
 		}

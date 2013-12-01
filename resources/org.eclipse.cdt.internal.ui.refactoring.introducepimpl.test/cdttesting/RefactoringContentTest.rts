@@ -929,3 +929,80 @@ Example::Example(const Example & toCopy)
 }
 
 
+
+//!Very simple class, using std::unique_ptr, implemented as shallow copy
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=unique
+copyType=shallow
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+#include <memory>
+
+class Example {
+public:
+    void foo();
+    Example();
+	~Example();
+private:
+    std::unique_ptr<struct ExampleImpl> _impl;
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+struct ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+Example::Example()
+:_impl(new ExampleImpl)
+{
+}
+
+Example::~Example() {
+}
+
+
