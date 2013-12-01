@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test;
+package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.junittest;
 
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.NodeHelper;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.node.NodeHelper;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
@@ -120,7 +120,7 @@ public class NodeHelperTest extends TestCase {
 	}
 
 	@Test
-	public void testIsEmptyDeclaratorTest() {
+	public void testIsEmptyDeclarator() {
 		// test empty declarator: ";"
 		CPPASTSimpleDeclaration simpleDec = new CPPASTSimpleDeclaration();
 		CPPASTSimpleDeclSpecifier decSpecifier = new CPPASTSimpleDeclSpecifier();
@@ -149,7 +149,7 @@ public class NodeHelperTest extends TestCase {
 	}
 
 	@Test
-	public void testIsFunctionDeclaratorTest() {
+	public void testIsFunctionDeclarator() {
 		CPPASTSimpleDeclaration simpleDec = new CPPASTSimpleDeclaration();
 		assertFalse(NodeHelper.isFunctionDeclarator(simpleDec));
 
@@ -164,7 +164,7 @@ public class NodeHelperTest extends TestCase {
 	}
 
 	@Test
-	public void testIsStaticTest() {
+	public void testIsStatic() {
 		CPPASTSimpleDeclaration simpleDec = new CPPASTSimpleDeclaration();
 		CPPASTCompositeTypeSpecifier compTypeSpecifier = new CPPASTCompositeTypeSpecifier();
 		compTypeSpecifier.setStorageClass(IASTSimpleDeclSpecifier.sc_unspecified);
