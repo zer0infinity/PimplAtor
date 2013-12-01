@@ -44,7 +44,7 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
 
 @SuppressWarnings("restriction")
-public class IntroducePImplRefactoring extends IntroducePImplContext {
+public class IntroducePImplRefactoring extends IntroducePImplCore {
 
 	private static final String CPP_FILE_EXTENSION = "cpp";
 	

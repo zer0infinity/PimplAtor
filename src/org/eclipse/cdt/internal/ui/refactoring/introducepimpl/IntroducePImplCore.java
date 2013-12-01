@@ -77,7 +77,7 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
 
 @SuppressWarnings("restriction")
-public class IntroducePImplContext extends CRefactoring {
+public class IntroducePImplCore extends CRefactoring {
 	
 	private static final String NONCOPYABLE = "noncopyable";
 	private static final String SHARED_PTR = "shared_ptr";
@@ -93,7 +93,7 @@ public class IntroducePImplContext extends CRefactoring {
 	
 	IntroducePImplInformation info;
 
-	public IntroducePImplContext(ICElement celem, ISelection selection, IntroducePImplInformation info) {
+	public IntroducePImplCore(ICElement celem, ISelection selection, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
 		name = Messages.IntroducePImpl_IntroducePImpl;
