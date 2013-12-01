@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
 
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.ui.IntroducePImplClassInputPage;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.ui.IntroducePImplDetailsInputPage;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 

@@ -1,8 +1,13 @@
-package org.eclipse.cdt.internal.ui.refactoring.introducepimpl;
+package org.eclipse.cdt.internal.ui.refactoring.introducepimpl.ui;
 
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.Messages;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation.CopyType;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation.LibraryType;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation.PointerType;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
