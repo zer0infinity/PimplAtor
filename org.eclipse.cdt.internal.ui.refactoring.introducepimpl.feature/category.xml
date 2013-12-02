@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl" version="1.0.0">
+      <category name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category"/>
+   </bundle>
+   <category-def name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category" label="PImpl Refactoring"/>
+</site>
