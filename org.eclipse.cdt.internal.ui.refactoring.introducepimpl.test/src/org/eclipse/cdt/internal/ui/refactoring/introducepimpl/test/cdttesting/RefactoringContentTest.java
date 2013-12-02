@@ -9,7 +9,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplRefactoring;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.junit.Test;
 
@@ -36,10 +35,8 @@ public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 		assertTrue(checkFinalConditions.isOK());
 		RefactoringStatus checkAllConditions = refactoring.checkAllConditions(NULL_PROGRESS_MONITOR);
 		assertTrue(checkAllConditions.isOK());
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertTrue(finalConditions.isOK());
-		createChange.perform(NULL_PROGRESS_MONITOR);
+		
+		context.dispose();
 	}
 	
 	@Override
