@@ -1,0 +1,1008 @@
+//!Very simple class, standard config
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class Example {
+public:
+    void foo();
+    Example();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+struct ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+Example::Example()
+:_impl(new ExampleImpl)
+{
+}
+
+
+
+Example::~Example()
+{
+    delete _impl;
+}
+
+
+
+Example::Example(const Example & toCopy)
+:_impl(new ExampleImpl(*toCopy._impl))
+{
+}
+
+
+
+//!Very simple class in a own namespace, standard config
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+namespace a {
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+}
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+namespace a {
+class Example {
+public:
+    void foo();
+    Example();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+};
+}
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+namespace a {
+
+void Example::foo(){
+}
+}
+
+
+//=
+#include "Example.h"
+
+namespace a {
+    struct ExampleImpl
+    {
+    public:
+        void foo()
+        {
+        }
+
+    };
+    void Example::foo()
+    {
+        _impl->foo();
+    }
+
+    Example::Example()
+    :_impl(new ExampleImpl)
+    {
+    }
+
+    Example::~Example()
+    {
+        delete _impl;
+    }
+
+    Example::Example(const Example & toCopy)
+    :_impl(new ExampleImpl(*toCopy._impl)){
+}
+}
+
+
+//!Very simple class, using boost::shared_ptr and a class as impl, implemented as deepcopy
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=class
+pointerType=shared
+libraryType=boost
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+#include <boost/make_shared.hpp>
+
+class Example {
+public:
+    void foo();
+    Example();
+    Example(const Example & toCopy);
+private:
+    boost::shared_ptr<class ExampleImpl> _impl;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+class ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+Example::Example()
+:_impl(boost::make_shared<ExampleImpl>())
+{
+}
+
+
+
+Example::Example(const Example & toCopy)
+:_impl(boost::make_shared<ExampleImpl>(*toCopy._impl))
+{
+}
+
+
+
+//!Very simple class, using std::shared_ptr, implemented as shallow copy
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=shared
+libraryType=std
+copyType=shallow
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+#include <memory>
+
+class Example {
+public:
+    void foo();
+    Example();
+private:
+    std::shared_ptr<struct ExampleImpl> _impl;
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+struct ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+Example::Example()
+:_impl(std::make_shared<ExampleImpl>())
+{
+}
+
+
+
+//!Big class, featuring constructor, copyconstructor, destructor and methods which take and return values, standard configuration
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    Example(int a, char b);
+    ~Example();
+    Example(const Example & toCopy);
+    int getValue();
+private:
+    int value;
+    char character;
+};
+
+#endif /*EXAMPLE_H_*/
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class Example {
+public:
+    Example(int a, char b);
+    int getValue();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+};
+
+#endif /*EXAMPLE_H_*/
+//@Example.cpp
+#include "Example.h"
+
+int Example::getValue()
+{
+    return 2 * value;
+}
+
+Example::Example(int a, char b):value(a), character(b)
+{
+}
+
+Example::~Example()
+{
+    //do something
+}
+
+Example::Example(const Example & toCopy):value(toCopy.value)
+{
+}
+//=
+#include "Example.h"
+
+
+
+
+
+
+
+
+
+struct ExampleImpl
+{
+public:
+    ExampleImpl(int a, char b)
+    :value(a), character(b)
+    {
+    }
+
+    ~ExampleImpl()
+    {
+    }
+
+    ExampleImpl(const ExampleImpl & toCopy)
+    :value(toCopy.value)
+    {
+    }
+
+    int getValue()
+    {
+        return 2 * value;
+    }
+
+private:
+    int value;
+    char character;
+};
+
+
+Example::Example(int a, char b)
+:_impl(new ExampleImpl(a, b))
+{
+}
+
+
+
+int Example::getValue()
+{
+    return _impl->getValue();
+}
+
+
+
+Example::~Example()
+{
+    delete _impl;
+}
+
+
+
+Example::Example(const Example & toCopy)
+:_impl(new ExampleImpl(*toCopy._impl))
+{
+}
+
+
+//!Big class, featuring constructor, copyconstructor, destructor and methods which take and return values, using boost::shared_ptr, shallow copy
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=shared
+libraryType=boost
+copyType=shallow
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    Example(int a, char b);
+    ~Example();
+    Example(const Example & toCopy);
+    int getValue();
+private:
+    int value;
+    char character;
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+#include <boost/make_shared.hpp>
+
+class Example {
+public:
+    Example(int a, char b);
+    int getValue();
+private:
+    boost::shared_ptr<struct ExampleImpl> _impl;
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+int Example::getValue()
+{
+    //do something
+	return value;
+}
+
+Example::Example(int a, char b):value(a), character(b)
+{
+    //do something
+}
+
+Example::~Example()
+{
+    //do something
+}
+
+Example::Example(const Example & toCopy):value(toCopy.value)
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+
+
+
+
+
+
+struct ExampleImpl
+{
+public:
+    ExampleImpl(int a, char b)
+    :value(a), character(b)
+    {
+    }
+
+    ~ExampleImpl()
+    {
+    }
+
+    ExampleImpl(const ExampleImpl & toCopy)
+    :value(toCopy.value)
+    {
+    }
+
+    int getValue()
+    {
+        return value;
+    }
+
+private:
+    int value;
+    char character;
+};
+
+
+Example::Example(int a, char b)
+:_impl(boost::make_shared<ExampleImpl>(a, b))
+{
+}
+
+
+
+int Example::getValue()
+{
+    return _impl->getValue();
+}
+
+
+
+//! Testing handling of static members, standard config
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+    static int getStaticPublicValue();
+    static int staticPublicValue;
+    static const int constPublicValue = 42;
+private:
+    static int getStaticPrivateValue(){
+    	return staticPrivateValue;
+	}
+    static int staticPrivateValue;
+    static const int constPrivateValue = 42;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class Example {
+public:
+    void foo();
+    static int getStaticPublicValue();
+    static int staticPublicValue;
+    static const int constPublicValue = 42;
+    Example();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+    static int getStaticPrivateValue();
+    static int staticPrivateValue;
+    static const int constPrivateValue = 42;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+int Example::getStaticPublicValue()
+{
+    return staticPublicValue;
+}
+
+//=
+#include "Example.h"
+
+
+
+
+
+struct ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+private:
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+int Example::getStaticPublicValue()
+{
+    return staticPublicValue;
+}
+
+
+
+int Example::getStaticPrivateValue()
+{
+    return staticPrivateValue;
+}
+
+
+
+Example::Example()
+:_impl(new ExampleImpl)
+{
+}
+
+
+
+Example::~Example()
+{
+    delete _impl;
+}
+
+
+
+Example::Example(const Example & toCopy)
+:_impl(new ExampleImpl(*toCopy._impl))
+{
+}
+
+
+
+//!Testing class within sub-sub-namespace
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+namespace a {
+namespace b {
+namespace c {
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+}
+}
+}
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+namespace a {
+namespace b {
+namespace c {
+class Example {
+public:
+    void foo();
+    Example();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+};
+}
+}
+}
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+namespace a {
+namespace b {
+namespace c {
+
+void Example::foo(){
+}
+}
+}
+}
+
+
+//=
+#include "Example.h"
+
+namespace a {
+namespace b {
+namespace c {
+    struct ExampleImpl
+    {
+    public:
+        void foo()
+        {
+        }
+
+    };
+    void Example::foo()
+    {
+        _impl->foo();
+    }
+
+    Example::Example()
+    :_impl(new ExampleImpl)
+    {
+    }
+
+    Example::~Example()
+    {
+        delete _impl;
+    }
+
+    Example::Example(const Example & toCopy)
+    :_impl(new ExampleImpl(*toCopy._impl)){
+}
+}
+}
+}
+
+
+//!Testing inline definitions
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=standard
+copyType=deep
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    int fooOutline();
+    void fooInline(){
+        value = 42;
+    }
+private:
+   void barOutline();
+   int barInline(){
+       return 42;
+   }
+   int value;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class Example {
+public:
+    int fooOutline();
+    void fooInline();
+    Example();
+    ~Example();
+    Example(const Example & toCopy);
+private:
+    struct ExampleImpl *_impl;
+};
+
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+int Example::fooOutline()
+{
+    return value;
+}
+
+void Example::barOutline()
+{
+    value = 42;
+}
+//=
+#include "Example.h"
+
+
+
+
+
+struct ExampleImpl
+{
+public:
+    int fooOutline()
+    {
+        return value;
+    }
+
+    void fooInline()
+    {
+        value = 42;
+    }
+
+private:
+    void barOutline()
+    {
+        value = 42;
+    }
+
+    int barInline()
+    {
+        return 42;
+    }
+
+    int value;
+};
+
+
+int Example::fooOutline()
+{
+    return _impl->fooOutline();
+}
+
+
+
+void Example::fooInline()
+{
+    _impl->fooInline();
+}
+
+
+
+Example::Example()
+:_impl(new ExampleImpl)
+{
+}
+
+
+
+Example::~Example()
+{
+    delete _impl;
+}
+
+
+
+Example::Example(const Example & toCopy)
+:_impl(new ExampleImpl(*toCopy._impl))
+{
+}
+
+
+
+//!Very simple class, using std::unique_ptr, implemented as shallow copy
+//#org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.IntroducePImplRefactoringTest
+//@.config
+classType=struct
+pointerType=unique
+copyType=shallow
+classNameImpl=ExampleImpl
+pointerNameImpl=_impl
+//@Example.h
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+class /*$*/Example/*$$*/ {
+public:
+    void foo();
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//=
+#ifndef EXAMPLE_H_
+#define EXAMPLE_H_
+
+#include <memory>
+
+class Example {
+public:
+    void foo();
+    Example();
+	~Example();
+private:
+    std::unique_ptr<struct ExampleImpl> _impl;
+};
+
+#endif /*EXAMPLE_H_*/
+
+
+//@Example.cpp
+#include "Example.h"
+
+void Example::foo()
+{
+}
+
+//=
+#include "Example.h"
+
+
+
+struct ExampleImpl
+{
+public:
+    void foo()
+    {
+    }
+
+};
+
+
+void Example::foo()
+{
+    _impl->foo();
+}
+
+
+
+Example::Example()
+:_impl(new ExampleImpl)
+{
+}
+
+Example::~Example() {
+}
+
+

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test" default="build.jars" basedir=".">
+
+	<property name="p2.build.repo" value="file:${buildDirectory}/buildRepo"/>
+	<property name="basews" value="${ws}"/>
+	<property name="baseos" value="${os}"/>
+	<property name="basearch" value="${arch}"/>
+	<property name="basenl" value="${nl}"/>
+	<property name="bundleId" value="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test"/>
+	<property name="bundleVersion" value="1.0.0"/>
+	<property name="p2.publishonerror" value="false"/>
+
+	<!-- Compiler settings. -->
+	<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacVerbose" value="false"/>
+	<property name="logExtension" value=".log"/>
+	<property name="compilerArg" value=""/>
+	<property name="compilation.prereq.log" value="${buildDirectory}/prereqErrors.log"/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.2"/>
+	<condition property="dir_bootclasspath" value="${java.home}/../Classes">
+		<and>
+			<os family="mac"/>
+			<available file="${java.home}/../Classes" type="dir"/>
+		</and>
+	</condition>
+	<property name="dir_bootclasspath" value="${java.home}/lib"/>
+	<path id="path_bootclasspath">
+		<fileset dir="${dir_bootclasspath}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<property name="bootclasspath" refid="path_bootclasspath"/>
+	<condition property="bundleBootClasspath" value="${JavaSE-1.7}"	>
+		<isset property="JavaSE-1.7"/>
+	</condition>
+	<condition property="bundleJavacSource" value="1.7"	>
+		<isset property="JavaSE-1.7"/>
+	</condition>
+	<condition property="bundleJavacTarget" value="1.7"	>
+		<isset property="JavaSE-1.7"/>
+	</condition>
+	<property name="bundleJavacSource" value="${javacSource}"/>
+	<property name="bundleJavacTarget" value="${javacTarget}"/>
+	<property name="bundleBootClasspath" value="${bootclasspath}"/>
+
+	<target name="init" depends="properties">
+		<condition property="pluginTemp" value="${buildTempFolder}/plugins"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="pluginTemp" value="${basedir}"/>
+		<condition property="build.result.folder" value="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="build.result.folder" value="${basedir}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<condition property="p2.publish.parts" value="true"		>
+			<istrue value="${p2.gathering}"/>
+		</condition>
+		<property name="compilation.problem.marker" value="${build.result.folder}/compilation.problem"/>
+		<condition property="compilation.problem.marker.exists" value="true"		>
+			<and>
+			<available file="${compilation.problem.marker}"/>
+			<isfalse value="${p2.publishonerror}"/>
+			</and>
+		</condition>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+
+	</target>
+
+	<target name="build.update.jar" depends="init" description="Build the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test for an update site.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<jar destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.jar" basedir="${temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" filesetmanifest="merge"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="@dot.nestedJars">
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.5.301.v20130717-1549"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.equinox.registry_3.5.301.v20130717-1549.jar" dest="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.5.301.v20130717-1549" overwrite="false">
+			<patternset includes="runtime_registry_compatibility.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.icu_50.1.1.v201304230130"/>
+		<unzip src="../../../eclipse_sa/plugins/com.ibm.icu_50.1.1.v201304230130.jar" dest="${buildDirectory}/nestedJars/com.ibm.icu_50.1.1.v201304230130" overwrite="false">
+			<patternset includes="icu-data.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.ui.workbench_3.105.1.v20130821-1411.jar" dest="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411" overwrite="false">
+			<patternset includes="e4-workbench.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.ui.workbench_3.105.1.v20130821-1411.jar" dest="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411" overwrite="false">
+			<patternset includes="compatibility.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.e4.core.services_1.1.0.v20130515-1343"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.e4.core.services_1.1.0.v20130515-1343.jar" dest="${buildDirectory}/nestedJars/org.eclipse.e4.core.services_1.1.0.v20130515-1343" overwrite="false">
+			<patternset includes="injection_annotations.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.ui.ide_3.9.1.v20130704-1828"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.ui.ide_3.9.1.v20130704-1828.jar" dest="${buildDirectory}/nestedJars/org.eclipse.ui.ide_3.9.1.v20130704-1828" overwrite="false">
+			<patternset includes="e4-ide.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.ui.win32_3.2.400.v20130516-1056"/>
+		<unzip src="../../../eclipse_sa/plugins/org.eclipse.ui.win32_3.2.400.v20130516-1056.jar" dest="${buildDirectory}/nestedJars/org.eclipse.ui.win32_3.2.400.v20130516-1056" overwrite="false">
+			<patternset includes="e4-ide.jar"/>
+		</unzip>
+	</target>
+	<target name="@dot" depends="init,@dot.nestedJars" unless="@dot" description="Create jar: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test @dot.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<mkdir dir="${build.result.folder}/@dot"/>
+		<path id="@dot.classpath">
+			<pathelement path="../../../eclipse_sa/plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+			<pathelement path="../org.eclipse.cdt.internal.ui.refactoring.introducepimpl/target/classes"/>
+			<pathelement path="../org.eclipse.cdt.internal.ui.refactoring.introducepimpl/@dot"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.ui_5.6.1.201309180223.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core_5.5.0.201309180223.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core.win32_5.3.0.201309180223.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core.win32.x86_5.2.0.201309180223"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.contenttype_3.4.200.v20130326-1255.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.osgi_3.9.1.v20130814-1242.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.preferences_3.5.100.v20130422-1538.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.5.301.v20130717-1549/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.registry_3.5.301.v20130717-1549.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.jobs_3.5.300.v20130429-1813.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.expressions_3.4.500.v20130515-1343.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.runtime_3.9.0.v20130326-1255.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.runtime.compatibility.auth_3.2.300.v20120523-2004.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.app_1.3.100.v20130327-1442.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.osgi.services_3.3.100.v20130513-1956.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/javax.servlet_3.0.0.v201112011016.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.filebuffers_3.5.300.v20130225-1821.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.icu_50.1.1.v201304230130/icu-data.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/com.ibm.icu_50.1.1.v201304230130.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.resources_3.8.101.v20130717-0806.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.resources.win32.x86_3.5.100.v20100505-1741.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ant.core_3.2.500.v20130402-1746.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.variables_3.2.700.v20130402-1741.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.filesystem_1.4.0.v20130514-1240.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.filesystem.win32.x86_1.4.0.v20121112-0948.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.text_3.5.300.v20130515-1451.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.commands_3.6.100.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ltk.core.refactoring_3.6.100.v20130605-1748.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.compare_3.5.401.v20130709-1308.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui_3.105.0.v20130522-1122.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.swt_3.102.1.v20130827-2021.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.swt.win32.win32.x86_3.102.1.v20130827-2048.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.jface_3.9.1.v20130725-1141.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.bidi_0.10.0.v20130327-1442.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411/e4-workbench.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.ui.workbench_3.105.1.v20130821-1411/compatibility.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.workbench_3.105.1.v20130821-1411.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/javax.annotation_1.1.0.v201209060031.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/javax.inject_1.0.0.v20091030.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.core.commands_0.10.2.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.core.contexts_1.3.1.v20130905-0905.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.core.di_1.3.0.v20130514-1256.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.e4.core.services_1.1.0.v20130515-1343/injection_annotations.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.core.services_1.1.0.v20130515-1343.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.workbench_1.0.1.v20130910-2014.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.model.workbench_1.0.1.v20130909-1436.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.emf.ecore_2.9.1.v20130827-0309.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.emf.common_2.9.1.v20130827-0309.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.services_1.0.1.v20130909-1436.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/javax.xml_1.3.4.v201005080400.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.di_1.0.0.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.core.di.extensions_0.11.100.v20130514-1256.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.emf.ecore.change_2.9.0.v20130827-0309.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.emf.ecore.xmi_2.9.1.v20130827-0309.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.workbench.renderers.swt_0.11.1.v20130812-1345.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.workbench.swt_0.12.1.v20130815-1438.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.apache.batik.css_1.6.0.v201011041432.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.apache.batik.util_1.6.0.v201011041432.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.apache.batik.util.gui_1.6.0.v201011041432.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.w3c.css.sac_1.3.1.v200903091627.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.w3c.dom.svg_1.1.0.v201011041433.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.w3c.dom.smil_1.0.0.v200806040011.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.databinding_1.4.1.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.databinding.observable_1.4.1.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.core.databinding.property_1.4.200.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.jface.databinding_1.6.200.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.css.core_0.10.100.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.css.swt_0.11.0.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.bindings_0.10.101.v20130801-2002.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.workbench3_0.12.0.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.css.swt.theme_0.9.100.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.widgets_1.0.0.v20130515-1857.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.ds_1.4.101.v20130813-1853.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.util_1.0.500.v20130404-1337.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.event_1.3.0.v20130327-1442.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.help_3.6.0.v20130326-1254.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.e4.ui.workbench.addons.swt_1.0.1.v20130823-1518.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.jface.text_3.8.101.v20130802-1147.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.ui.ide_3.9.1.v20130704-1828/e4-ide.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.ide_3.9.1.v20130704-1828.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.win32_3.2.400.v20130516-1056.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.ui.win32_3.2.400.v20130516-1056/e4-ide.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.views_3.6.100.v20130326-1250.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.forms_3.6.1.v20130822-1117.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.p2.engine_2.3.0.v20130526-2122.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.p2.core_2.3.0.v20130327-2119.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.p2.metadata_2.2.0.v20130523-1557.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.p2.metadata.repository_1.2.100.v20130327-2119.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.p2.repository_2.3.0.v20130412-2032.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.security_1.2.0.v20130424-1801.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.equinox.security.win32.x86_1.0.300.v20130327-1442.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.workbench.texteditor_3.8.101.v20130729-1318.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.compare.core_3.5.300.v20130514-1224.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.editors_3.8.100.v20130513-1637.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ltk.ui.refactoring_3.7.100.v20130605-1748.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.navigator_3.5.300.v20130517-0139.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.team.core_3.7.0.v20130514-1224.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.team.ui_3.7.1.v20130729-1104.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.search_3.9.0.v20130312-1625.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.console_3.5.200.v20130514-0954.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.navigator.resources_3.4.500.v20130516-1049.jar"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.ui.views.properties.tabbed_3.6.0.v20130515-1857.jar"/>
+			<pathelement path="../org.jmock/bsh-core-2.0b4.jar"/>
+			<pathelement path="../org.jmock/cglib-nodep-2.2.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3-javadoc.jar"/>
+			<pathelement path="../org.jmock/hamcrest-core-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3-javadoc.jar"/>
+			<pathelement path="../org.jmock/hamcrest-library-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/hamcrest-unit-test-1.3.jar"/>
+			<pathelement path="../org.jmock/hamcrest-unit-test-1.3-sources.jar"/>
+			<pathelement path="../org.jmock/jmock-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-junit3-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-junit4-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-legacy-2.6.0.jar"/>
+			<pathelement path="../org.jmock/jmock-script-2.6.0.jar"/>
+			<pathelement path="../org.jmock/objenesis-1.0.jar"/>
+			<pathelement path="../ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/bin/"/>
+			<pathelement path="../ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/@dot"/>
+			<pathelement path="../../../eclipse_sa/plugins/org.eclipse.cdt.core.tests_5.4.1.201306191513.jar"/>
+		</path>
+		<!-- compile the source code -->
+		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}"		>
+			<compilerarg line="${compilerArg}" compiler="${build.compiler}"/>
+			<classpath refid="@dot.classpath" />
+			<src path="src/"			/>
+			<compilerarg value="@${basedir}/javaCompiler...args" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"			/>
+			<compilerarg line="-log &apos;${build.result.folder}/@dot${logExtension}&apos;" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"			/>
+		</javac>
+		<antcall target="checkCompilationResults"/>
+		<!-- Copy necessary resources -->
+		<copy todir="${build.result.folder}/@dot" failonerror="true" overwrite="false">
+			<fileset dir="src/">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="src.zip" depends="init" unless="src.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<antcall target="zip.src.zip"/>
+	</target>
+	<target name="zip.src.zip">
+		<zip destfile="${build.result.folder}/src.zip" filesonly="false" whenempty="skip" update="false">
+			<fileset dir="src/">
+				<include name="**/*.java"/>
+			</fileset>
+		</zip>
+	</target>
+	<target name="copy.src.zip">
+		<copy todir="${source.destination.folder}/" failonerror="true" overwrite="true">
+			<fileset dir="src/">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build.jars" depends="init" description="Compile classes and build nested jars for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.">
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+		<available property="@dot" file="${build.result.folder}/@dot"/>
+		<antcall target="@dot"/>
+	</target>
+
+	<target name="checkCompilationResults" if="compilation.error.occured">
+		<echo file="${compilation.problem.marker}" message="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
+		<eclipse.logCompileError bundle="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" log="${compilation.prereq.log}">
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/ch.hsr.ifs.cdttesting/ch.hsr.ifs.cdttesting/compilation.problem"/>
+			<include name="${pluginTemp}/ch.hsr.ifs.cdttesting_3.0.0.201312011844/compilation.problem"/>
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.jmock/compilation.problem"/>
+			<include name="${pluginTemp}/org.jmock_2.6.0/compilation.problem"/>
+			<include name="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl/compilation.problem"/>
+			<include name="${pluginTemp}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl_1.0.0/compilation.problem"/>
+		</eclipse.logCompileError>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="src.zip" file="${build.result.folder}/src.zip"/>
+		<antcall target="src.zip"/>
+	</target>
+
+	<target name="publish.bin.parts" depends="init" if="p2.publish.parts" unless="compilation.problem.marker.exists">
+		<mkdir dir="${build.result.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy todir="${build.result.folder}" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/MANIFEST.MF"/>
+				<include name="plugin.xml"/>
+				<include name="fragment.xml"/>
+			</fileset>
+		</copy>
+		<antcall target="apitools.generation">
+			<param name="target.folder" value="${build.result.folder}"/>
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+		</antcall>
+		<eclipse.gatherBundle 
+		   metadataRepository="${p2.build.repo}"
+		   artifactRepository="${p2.build.repo}"
+		   buildResultFolder="${build.result.folder}"
+		   baseDirectory="${basedir}"
+		/>
+	</target>
+
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="true" overwrite="false">
+			<fileset dir="${build.result.folder}/@dot">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/"/>
+				<include name="src/"/>
+				<include name="bin/"/>
+				<include name="resources/"/>
+				<include name="javaCompiler...args"/>
+				<include name="epl-v10.html"/>
+				<include name="build.properties"/>
+				<include name="build.xml"/>
+				<include name=".settings/"/>
+			</fileset>
+		</copy>
+		<antcall target="apitools.generation">
+			<param name="target.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+		</antcall>
+	</target>
+
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="false" overwrite="false"/>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		</antcall>
+	</target>
+
+	<target name="gather.individual.sources" depends="init">
+		<antcall target="copy.src.zip">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+	</target>
+
+	<target name="copy.src.includes" depends="init">
+		<copy todir="${source.destination.folder}" failonerror="false" overwrite="false">
+			<fileset dir="${basedir}">
+				<include name="build.xml"/>
+				<include name="epl-v10.html"/>
+				<include name="resources/"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0" failonerror="false" overwrite="false">
+			<fileset dir="${build.result.folder}">
+				<include name="@dot${logExtension}"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="clean" depends="init" description="Clean the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test of all the zips, jars and logs created.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<delete file="${build.result.folder}/src.zip"/>
+		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.jar"/>
+		<delete file="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.zip"/>
+		<delete dir="${temp.folder}"/>
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
+		<eclipse.convertPath fileSystemPath="D:/MyFiles/Coding/Java/workspace_sa/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test" property="resourcePath"/>
+		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}">
+				<include name="**/*.bin${logExtension}"/>
+			</fileset>
+		</delete>
+		<zip destfile="${plugin.destination}/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test_1.0.0.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="apitools.generation" if="generateAPIDescription">
+		<apitooling.apigeneration  projectName="${projectName}" project="${projectLocation}" binary="${binary.folders}" target="${target.folder}" extramanifests="${extraManifests}" allownonapiproject="${allowNonApiProject}"		/>
+	</target>
+
+</project>
