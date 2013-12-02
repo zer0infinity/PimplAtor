@@ -11,5 +11,5 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	NodeHelperTest.class,
 })
-public class IntroducePImplTestSuite extends TestSuite {
+public class IntroducePImplJUnitTestSuite extends TestSuite {
 }

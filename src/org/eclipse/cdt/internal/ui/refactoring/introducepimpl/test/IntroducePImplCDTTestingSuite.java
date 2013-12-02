@@ -13,5 +13,5 @@ import org.junit.runners.Suite.SuiteClasses;
 	DoNothingTest.class,
 	RefactoringContentTest.class,
 })
-public class IntroducePImplCDTSuite extends TestSuite {
+public class IntroducePImplCDTTestingSuite extends TestSuite {
 }

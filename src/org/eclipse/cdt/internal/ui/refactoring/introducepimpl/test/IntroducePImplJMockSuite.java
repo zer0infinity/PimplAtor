@@ -15,5 +15,5 @@ import org.junit.runners.Suite.SuiteClasses;
 	DeclarationFinderTest.class,
 	SelectionHelperTest.class,
 })
-public class IntroducePImplMockSuite extends TestSuite {
+public class IntroducePImplJMockSuite extends TestSuite {
 }
