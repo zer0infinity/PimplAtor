@@ -558,7 +558,7 @@ public class IntroducePImplCore extends CRefactoring {
 		return parameterExpression;
 	}
 
-	ICPPASTBaseSpecifier createNoncopyableInitailizer() {
+	ICPPASTBaseSpecifier createNoncopyableInitializer() {
 		ICPPASTBaseSpecifier includeSpecifier = new CPPASTBaseSpecifier();
 		ICPPASTQualifiedName noncopyableName = new CPPASTQualifiedName();
 		IASTName libraryName = new CPPASTName(BOOST.toCharArray());

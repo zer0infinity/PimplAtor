@@ -412,7 +412,7 @@ public class IntroducePImplRefactoring extends IntroducePImplCore {
 				.createVisibilityLabel(ICPPASTVisibilityLabel.v_public));
 		if (info.getCopyType() == IntroducePImplInformation.CopyType.NONCOPYABLE) {
 			((ICPPASTCompositeTypeSpecifier) classNode.getDeclSpecifier())
-					.addBaseSpecifier(createNoncopyableInitailizer());
+					.addBaseSpecifier(createNoncopyableInitializer());
 		}
 		ASTRewrite classNodeRewrite = headerRewrite.replace(info.getClassSpecifier(), classNode.getDeclSpecifier(),
 				new TextEditGroup(Messages.IntroducePImpl_Rewrite_HeaderClassReplace));
