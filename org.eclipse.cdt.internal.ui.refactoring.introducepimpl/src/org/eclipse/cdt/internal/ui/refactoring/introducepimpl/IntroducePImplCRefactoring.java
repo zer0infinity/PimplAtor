@@ -74,7 +74,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.edits.TextEditGroup;
 
 @SuppressWarnings("restriction")
-public abstract class IntroducePImplCore extends CRefactoring {
+public abstract class IntroducePImplCRefactoring extends CRefactoring {
 	
 	private static final String NONCOPYABLE = "noncopyable";
 	private static final String SHARED_PTR = "shared_ptr";
@@ -90,7 +90,7 @@ public abstract class IntroducePImplCore extends CRefactoring {
 	
 	IntroducePImplInformation info;
 
-	public IntroducePImplCore(ICElement celem, ISelection selection, IntroducePImplInformation info) {
+	public IntroducePImplCRefactoring(ICElement celem, ISelection selection, IntroducePImplInformation info) {
 		super(celem, selection, null);
 		this.info = info;
 		name = Messages.IntroducePImpl_IntroducePImpl;
