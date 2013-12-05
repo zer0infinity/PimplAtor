@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplContext;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplInformation;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.IntroducePImplRefactoring;
 import org.eclipse.core.resources.IFile;
@@ -22,21 +22,24 @@ public class RefactoringContentTest extends CDTProjectJUnit4RtsTest {
 	@Override
 	@Test
 	public void runTest() throws Throwable {
-		IFile refFile = project.getFile(activeFileName);
-		ICElement element = CoreModel.getDefault().create(refFile);
-		
-		IntroducePImplRefactoring refactoring = new IntroducePImplRefactoring(element, selection, info);
-		CRefactoringContext context = new CRefactoringContext(refactoring);
-		refactoring.setContext(context);
-		
-		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		assertTrue(checkInitialConditions.isOK());
-		RefactoringStatus checkFinalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertTrue(checkFinalConditions.isOK());
-		RefactoringStatus checkAllConditions = refactoring.checkAllConditions(NULL_PROGRESS_MONITOR);
-		assertTrue(checkAllConditions.isOK());
-		
-		context.dispose();
+		IntroducePImplContext context = null;
+		try {
+			IFile refFile = project.getFile(activeFileName);
+			ICElement element = CoreModel.getDefault().create(refFile);
+			
+			IntroducePImplRefactoring refactoring = new IntroducePImplRefactoring(element, selection, info);
+			context = new IntroducePImplContext(refactoring);
+			refactoring.setContext(context);
+			
+			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+			assertTrue(checkInitialConditions.isOK());
+			RefactoringStatus checkFinalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			assertTrue(checkFinalConditions.isOK());
+			RefactoringStatus checkAllConditions = refactoring.checkAllConditions(NULL_PROGRESS_MONITOR);
+			assertTrue(checkAllConditions.isOK());
+		} finally {
+			context.dispose();
+		}
 	}
 	
 	@Override
