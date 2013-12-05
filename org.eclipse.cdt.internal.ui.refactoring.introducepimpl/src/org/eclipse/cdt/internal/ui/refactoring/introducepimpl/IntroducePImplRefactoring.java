@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
@@ -102,7 +103,7 @@ public class IntroducePImplRefactoring extends IntroducePImplCore {
 					shouldVisitDeclarations = true;
 				}
 				public int visit(IASTDeclaration declaration) {
-					if (SelectionHelper.isSelectionOnExpression(textSelection, declaration)) {
+					if (((IntroducePImplContext) refactoringContext).isSelectionOnExpression(textSelection, declaration)) {
 						container.setObject((IASTDeclaration) declaration);
 					}
 					return super.visit(declaration);
@@ -127,7 +128,7 @@ public class IntroducePImplRefactoring extends IntroducePImplCore {
 			tmpUnit = getAST(tu, null);
 			if (tmpUnit != null) {
 				if (tmpUnit.isHeaderUnit()) {
-					selectedNode = DeclarationFinder.findDeclarationInTranslationUnit(tmpUnit, indexName);
+					selectedNode = ((IntroducePImplContext) refactoringContext).findDeclarationInTranslationUnit(tmpUnit, indexName);
 					break;
 				}
 			}
@@ -428,5 +429,10 @@ public class IntroducePImplRefactoring extends IntroducePImplCore {
 
 		return new NodeContainer<ICPPASTCompositeTypeSpecifier>((ICPPASTCompositeTypeSpecifier) implClassNode
 				.getDeclSpecifier(), classRewrite);
+	}
+
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		return null;
 	}
 }

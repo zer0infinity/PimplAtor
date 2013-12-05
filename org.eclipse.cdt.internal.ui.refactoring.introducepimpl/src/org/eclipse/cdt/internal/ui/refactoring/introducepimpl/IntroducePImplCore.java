@@ -66,21 +66,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.node.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.node.NodeFactory;
 import org.eclipse.cdt.internal.ui.refactoring.introducepimpl.node.NodeHelper;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
 
 @SuppressWarnings("restriction")
-public class IntroducePImplCore extends CRefactoring {
+public abstract class IntroducePImplCore extends CRefactoring {
 	
 	private static final String NONCOPYABLE = "noncopyable";
 	private static final String SHARED_PTR = "shared_ptr";
@@ -680,9 +674,9 @@ public class IntroducePImplCore extends CRefactoring {
 		for (IIndexName iName : iNames) {
 			IASTNode cppDecName = null;
 			if (info.getSourceUnit() != null) {
-				cppDecName = DeclarationFinder.findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
+				cppDecName = ((IntroducePImplContext) refactoringContext).findDeclarationInTranslationUnit(info.getSourceUnit(), iName);
 			} else if (info.getHeaderUnit() != null) {
-				cppDecName = DeclarationFinder.findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
+				cppDecName = ((IntroducePImplContext) refactoringContext).findDeclarationInTranslationUnit(info.getHeaderUnit(), iName);
 			}
 			if (!(cppDecName == null)) {
 				while (!(cppDecName instanceof ICPPASTFunctionDefinition)) {
@@ -692,30 +686,5 @@ public class IntroducePImplCore extends CRefactoring {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	protected RefactoringDescriptor getRefactoringDescriptor() {
-		return null;
-	}
-
-	@Override
-	protected void collectModifications(IProgressMonitor pm,
-			ModificationCollector collector) throws CoreException,
-			OperationCanceledException {
-	}
-	
-	@Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
-		return super.checkInitialConditions(pm);
-	}
-	
-	@Override
-	protected RefactoringStatus checkFinalConditions(
-			IProgressMonitor subProgressMonitor,
-			CheckConditionsContext checkContext) throws CoreException,
-			OperationCanceledException {
-		return super.checkFinalConditions(subProgressMonitor, checkContext);
 	}
 }
