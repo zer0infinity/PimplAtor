@@ -43,4 +43,52 @@
          </action>           
          </viewerContribution>
       </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionHandler"
+            id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+            name="Pimpl Function">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionHandler"
+            commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+               id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+               label="Refactor">
+            <command
+                  commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+                  id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+                  label="Pimpl Function"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+               id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+               label="Refactor">
+            <command
+                  commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+                  id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+                  label="Pimpl Function"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
 </plugin>
