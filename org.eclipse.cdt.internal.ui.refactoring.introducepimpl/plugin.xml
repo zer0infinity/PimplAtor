@@ -62,16 +62,17 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+            locationURI="menu:org.eclipse.ui.main.menu?after=edit">
          <menu
                commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-               id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
+               id="org.eclipse.jdt.ui.refactoring.menu"
                label="Refactor">
             <command
                   commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   label="Pimpl Function"
-                  style="push">
+                  style="push"
+                  tooltip="PIMPL Refactoring">
             </command>
          </menu>
       </menuContribution>
@@ -86,7 +87,8 @@
                   commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   label="Pimpl Function"
-                  style="push">
+                  style="push"
+                  tooltip="PIMPL Refactoring">
             </command>
          </menu>
       </menuContribution>
