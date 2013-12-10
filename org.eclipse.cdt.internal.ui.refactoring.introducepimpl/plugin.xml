@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+<!-- deprecated
 	<extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -29,7 +30,7 @@
          </action>        
     </actionSet>
    </extension>
-
+-->
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -65,7 +66,7 @@
             <command
                   commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-                  label="Pimpl Function"
+                  label="PIMPL Refactoring"
                   style="push"
                   tooltip="PIMPL Refactoring">
             </command>
@@ -77,7 +78,7 @@
          <command
                commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-               label="Pimpl Function"
+               label="PIMPL Refactoring"
                style="push"
                tooltip="PIMPL Refactoring">
          </command>
