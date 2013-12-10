@@ -44,6 +44,14 @@
       <handler
             class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionHandler"
             commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl">
+         <enabledWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.cdt.ui.editor.CEditor">
+               </equals>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
