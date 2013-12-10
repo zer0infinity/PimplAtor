@@ -31,22 +31,10 @@
    </extension>
 
    <extension
-            point="org.eclipse.ui.popupMenus">
-         <viewerContribution
-               id="Menu.viewerContribution1" 
-               targetID="#CEditorContext">
-         <action
-               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplEditorActionDelegate"
-               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.context.actions"
-               label="Introduce PImpl..."
-               menubarPath="org.eclipse.cdt.ui.refactoring.menu/codingGroup">
-         </action>           
-         </viewerContribution>
-      </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionHandler"
+            description="PIMPL Refactoring"
             id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
             name="Pimpl Function">
       </command>
@@ -61,10 +49,9 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            allPopups="false"
+            allPopups="true"
             locationURI="menu:org.eclipse.ui.main.menu?after=edit">
          <menu
-               commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                id="org.eclipse.jdt.ui.refactoring.menu"
                label="Refactor">
             <command
@@ -77,20 +64,15 @@
          </menu>
       </menuContribution>
       <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <menu
+            allPopups="true"
+            locationURI="popup:org.eclipse.cdt.ui.refactoring.menu?after=additions">
+         <command
                commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-               label="Refactor">
-            <command
-                  commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-                  id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-                  label="Pimpl Function"
-                  style="push"
-                  tooltip="PIMPL Refactoring">
-            </command>
-         </menu>
+               label="Pimpl Function"
+               style="push"
+               tooltip="PIMPL Refactoring">
+         </command>
       </menuContribution>
    </extension>
 </plugin>
