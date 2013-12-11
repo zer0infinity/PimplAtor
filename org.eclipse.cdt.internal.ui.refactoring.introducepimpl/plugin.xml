@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-<!-- deprecated
-	<extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            description="Action set containing coding related C/C++ actions"
-            id="org.eclipse.cdt.internal.ui.refactoring.CodingActionSet"
-            label="C/C++ Coding"
-            visible="true">
-         <menu
-               label="Refactor"
-               path="edit"
-               id="org.eclipse.jdt.ui.refactoring.menu">
-            <separator name="reorgGroup"/>
-            <separator name="codingGroup"/>
-            <separator name="reorgGroup2"/>
-            <separator name="typeGroup"/>
-            <separator name="typeGroup2"/>
-            <separator name="codingGroup2"/>
-            <separator name="typeGroup3"/>
-            <separator name="historyGroup"/>
-        </menu>
-         <action
-               class="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionDelegate"
-               id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions"
-               label="Introduce PImpl..."
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup">
-         </action>        
-    </actionSet>
-   </extension>
--->
    <extension
          point="org.eclipse.ui.commands">
       <command
