@@ -5,7 +5,7 @@
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.actions.IntroducePImplActionHandler"
-            description="PIMPL Refactoring"
+            description="PIMPL refactoring"
             id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
             name="Pimpl Function">
       </command>
@@ -36,9 +36,9 @@
             <command
                   commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                   id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-                  label="PIMPL Refactoring"
+                  label="PIMPL refactoring"
                   style="push"
-                  tooltip="PIMPL Refactoring">
+                  tooltip="PIMPL refactoring">
             </command>
          </menu>
       </menuContribution>
@@ -48,9 +48,9 @@
          <command
                commandId="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
                id="org.eclipse.cdt.ui.refactoring.command.IntroducePImpl"
-               label="PIMPL Refactoring"
+               label="PIMPL refactoring"
                style="push"
-               tooltip="PIMPL Refactoring">
+               tooltip="PIMPL refactoring">
          </command>
       </menuContribution>
    </extension>
