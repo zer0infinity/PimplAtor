@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Introduce PImpl Refactoring
 Bundle-SymbolicName: org.eclipse.cdt.internal.ui.refactoring.introducepimpl;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.cdt.internal.ui.refactoring.introducepimpl.Activator
 Export-Package: org.eclipse.cdt.internal.ui.refactoring.introducepimpl; uses:="org.eclipse.jface.window,  org.eclipse.jface.wizard,  org.eclipse.core.runtime,  org.eclipse.swt.events,  org.eclipse.cdt.internal.core.dom.parser.cpp,  org.eclipse.osgi.util,  org.eclipse.cdt.core.model,  org.eclipse.cdt.core.dom.ast,  org.eclipse.core.resources,  org.eclipse.jface.viewers,  org.eclipse.ltk.core.refactoring,  org.eclipse.swt.widgets,  org.eclipse.ltk.ui.refactoring,  org.eclipse.cdt.internal.ui.refactoring"
 Require-Bundle: org.eclipse.ui,
