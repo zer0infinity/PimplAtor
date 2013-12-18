@@ -11,13 +11,11 @@
     <module>ch.hsr.ifs.cdttesting/org.eclipse.cdt/core/org.eclipse.cdt.ui.tests</module>
     <module>ch.hsr.ifs.cdttesting/org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.test</module>
     <module>ch.hsr.ifs.cdttesting</module>
-<!--
 	<module>org.jmock</module>
     <module>org.eclipse.cdt.internal.ui.refactoring.introducepimpl</module>
     <module>org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature</module>
     <module>org.eclipse.cdt.internal.ui.refactoring.introducepimpl.test</module>
     <module>org.eclipse.cdt.internal.ui.refactoring.introducepimpl.updatesite</module>
--->
   </modules>
 
   <properties>
@@ -40,9 +38,6 @@
         <artifactId>tycho-maven-plugin</artifactId>
         <version>${tycho-version}</version>
         <extensions>true</extensions>
-		<configuration>
-			<includeAllDependencies>true</includeAllDependencies>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
