@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature_1.0.0.jar" id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature" version="1.0.0">
+   <feature url="features/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature_1.0.0.201312181413.jar" id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature" version="1.0.0.201312181413">
       <category name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category"/>
    </feature>
    <category-def name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category" label="PImpl Refactoring"/>

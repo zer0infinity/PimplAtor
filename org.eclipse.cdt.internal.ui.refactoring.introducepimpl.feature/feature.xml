@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature"
       label="Introduce PImpl Refactoring"
       version="1.0.0.qualifier"
-      provider-name="HSR University of applied sciences Rapperswil">
+      provider-name="HSR University of applied sciences Rapperswil"
+      plugin="org.eclipse.cdt.internal.ui.refactoring.introducepimpl">
 
    <description>
       PIMPL (idiom) Refactoring
@@ -89,6 +90,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <url>
+      <update label="PIMPL Refactoring" url="http://sinv-56011.edu.hsr.ch/update-site"/>
       <discovery label="HSR University of applied sciences Rapperswil" url="http://www.hsr.ch"/>
       <discovery label="IFS Institute for Software" url="http://ifs.hsr.ch"/>
    </url>
@@ -113,7 +115,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
