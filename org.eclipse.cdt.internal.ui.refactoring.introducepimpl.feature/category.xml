@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <bundle id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl" version="1.0.0">
+   <feature url="features/org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature_1.0.0.qualifier.jar" id="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category"/>
-   </bundle>
+   </feature>
    <category-def name="org.eclipse.cdt.internal.ui.refactoring.introducepimpl.category" label="PImpl Refactoring"/>
 </site>

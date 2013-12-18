@@ -36,15 +36,4 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-  	<dependency>
-  		<groupId>
-  			org.eclipse.cdt.internal.ui.refactoring.introducepimpl
-  		</groupId>
-  		<artifactId>
-  			org.eclipse.cdt.internal.ui.refactoring.introducepimpl
-  		</artifactId>
-  		<version>1.0.0</version>
-  	</dependency>
-  </dependencies>
 </project>
